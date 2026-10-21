@@ -1,0 +1,160 @@
+(function () {
+  "use strict";
+  var cfg = window.HUB_CONFIG || {};
+  var repo = /^[\w.-]+\/[\w.-]+$/.test(cfg.githubRepo || "") ? cfg.githubRepo : "";
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text; // textContent only: data is never parsed as HTML
+    return n;
+  }
+
+  function fmt(n) { return typeof n === "number" ? n.toLocaleString() : "–"; }
+
+  // ---- Download counts from GitHub Releases (sum of asset download_count by file name) ----
+  function loadCounts() {
+    if (!repo) return Promise.resolve(null);
+    try {
+      var cached = JSON.parse(sessionStorage.getItem("hub-counts") || "null");
+      if (cached && Date.now() - cached.t < 10 * 60 * 1000) return Promise.resolve(cached.v);
+    } catch (e) {}
+    return fetch("https://api.github.com/repos/" + repo + "/releases?per_page=100", { headers: { Accept: "application/vnd.github+json" } })
+      .then(function (r) { if (!r.ok) throw new Error("api " + r.status); return r.json(); })
+      .then(function (releases) {
+        var by = {};
+        releases.forEach(function (rel) {
+          (rel.assets || []).forEach(function (a) { by[a.name] = (by[a.name] || 0) + (a.download_count || 0); });
+        });
+        try { sessionStorage.setItem("hub-counts", JSON.stringify({ t: Date.now(), v: by })); } catch (e) {}
+        return by;
+      })
+      .catch(function () { return null; });
+  }
+
+  // ---- Render apps ----
+  function renderApps(apps, counts) {
+    var grid = document.getElementById("app-grid");
+    grid.textContent = "";
+    var total = 0, any = false;
+    apps.forEach(function (a) {
+      var card = el("article", "card app");
+      var head = el("div", "app-head");
+      head.appendChild(el("div", "app-icon", a.icon || "⬢"));
+      var t = el("div");
+      t.appendChild(el("h3", null, a.name));
+      t.appendChild(el("p", null, a.tagline));
+      head.appendChild(t);
+      card.appendChild(head);
+
+      var tags = el("ul", "tags");
+      (a.tags || []).forEach(function (x) { tags.appendChild(el("li", null, x)); });
+      card.appendChild(tags);
+
+      var meta = el("div", "meta");
+      var s = el("span"); s.appendChild(document.createTextNode("Size ")); s.appendChild(el("b", null, a.size || "–")); meta.appendChild(s);
+      var p = el("span"); p.appendChild(document.createTextNode("For ")); p.appendChild(el("b", null, a.platform || "–")); meta.appendChild(p);
+      var c = counts && typeof counts[a.asset] === "number" ? counts[a.asset] : null;
+      if (c != null) { total += c; any = true; }
+      var d = el("span"); d.appendChild(document.createTextNode("Downloads ")); d.appendChild(el("b", null, fmt(c))); meta.appendChild(d);
+      card.appendChild(meta);
+
+      var actions = el("div", "app-actions");
+      var dl = el("a", "btn btn-primary", "Download");
+      if (repo && a.asset && a.released) {
+        dl.href = "https://github.com/" + repo + "/releases/latest/download/" + encodeURIComponent(a.asset);
+        dl.rel = "noopener";
+      } else {
+        dl.href = "#request"; dl.textContent = "Coming soon";
+      }
+      actions.appendChild(dl);
+      if (a.runOnline && /^https:\/\//.test(a.runOnline)) {
+        var run = el("a", "btn btn-ghost", "Run online");
+        run.href = a.runOnline; run.rel = "noopener";
+        actions.appendChild(run);
+      }
+      card.appendChild(actions);
+      if (a.sha256) card.appendChild(el("div", "sha", "SHA-256: " + a.sha256));
+      grid.appendChild(card);
+    });
+    document.getElementById("stat-apps").textContent = String(apps.length);
+    document.getElementById("stat-downloads").textContent = any ? fmt(total) : "–";
+  }
+
+  fetch("apps.json", { cache: "no-cache" })
+    .then(function (r) { return r.json(); })
+    .then(function (apps) { return loadCounts().then(function (counts) { renderApps(apps, counts); }); })
+    .catch(function () {
+      var g = document.getElementById("app-grid");
+      g.textContent = "";
+      g.appendChild(el("p", "muted", "Could not load the app list. Please try again later."));
+    });
+
+  // ---- Footer ----
+  document.getElementById("year").textContent = String(new Date().getFullYear());
+  if (repo) document.getElementById("repo-link").href = "https://github.com/" + repo;
+
+  // ---- Request form ----
+  var form = document.getElementById("request-form");
+  var status = document.getElementById("f-status");
+  var btn = document.getElementById("f-submit");
+  var details = document.getElementById("f-details");
+  var counter = document.getElementById("f-count");
+  details.addEventListener("input", function () { counter.textContent = String(details.value.length); });
+
+  function say(msg, ok) { status.textContent = msg; status.className = "status " + (ok ? "ok" : "err"); }
+
+  function lastSent() { try { return Number(localStorage.getItem("hub-last-req") || 0); } catch (e) { return 0; } }
+  function markSent() { try { localStorage.setItem("hub-last-req", String(Date.now())); } catch (e) {} }
+
+  function sendFirebase(data) {
+    var fb = cfg.firebase;
+    var base = "https://www.gstatic.com/firebasejs/10.12.2/";
+    return Promise.all([import(base + "firebase-app.js"), import(base + "firebase-firestore.js")]).then(function (m) {
+      var app = m[0].initializeApp(fb);
+      var db = m[1].getFirestore(app);
+      return m[1].addDoc(m[1].collection(db, "requests"), {
+        app: data.app, details: data.details, name: data.name, email: data.email,
+        createdAt: m[1].serverTimestamp(), status: "new"
+      });
+    });
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (document.getElementById("f-web").value) return; // honeypot: bots fill this in
+    var data = {
+      app: document.getElementById("f-app").value.trim(),
+      details: details.value.trim(),
+      name: document.getElementById("f-name").value.trim(),
+      email: document.getElementById("f-email").value.trim()
+    };
+    if (data.app.length < 3) return say("Please describe the app you need (at least 3 characters).", false);
+    if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return say("That email address doesn’t look right.", false);
+    if (Date.now() - lastSent() < 60 * 1000) return say("Please wait a minute before sending another request.", false);
+
+    btn.disabled = true; say("Sending…", true);
+
+    if (cfg.firebase) {
+      sendFirebase(data).then(function () {
+        markSent(); form.reset(); counter.textContent = "0";
+        say("Thanks! Your request was received.", true);
+      }).catch(function () {
+        say("Sorry, something went wrong. Please try again later.", false);
+      }).then(function () { btn.disabled = false; });
+      return;
+    }
+
+    if (repo) {
+      var body = "**What should it do?**\n" + data.app + "\n\n**Details**\n" + (data.details || "_none_");
+      var url = "https://github.com/" + repo + "/issues/new?labels=app-request&title=" +
+        encodeURIComponent("App request: " + data.app.slice(0, 70)) + "&body=" + encodeURIComponent(body);
+      markSent();
+      window.open(url, "_blank", "noopener");
+      say("Opening a pre-filled GitHub request. Submit it there to finish. (Your name and email are not included.)", true);
+    } else {
+      say("Requests aren’t switched on yet. Set githubRepo or firebase in config.js.", false);
+    }
+    btn.disabled = false;
+  });
+})();

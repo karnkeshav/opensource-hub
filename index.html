@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com https://firestore.googleapis.com https://*.googleapis.com; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Open Source Hub</title>
+<meta name="description" content="Tiny, free, open-source apps that run offline. No account, no tracking, no bloat.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232563eb'/%3E%3Cpath d='M9 22l4-12 3 8 3-8 4 12' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Open Source Hub home">
+      <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M9 22l4-12 3 8 3-8 4 12" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Open Source Hub</span>
+    </a>
+    <nav aria-label="Primary">
+      <a href="#apps">Apps</a>
+      <a href="#why">Why</a>
+      <a href="#request" class="btn btn-small">Request an app</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Free forever &middot; Open source &middot; Works offline</p>
+      <h1>Real software that fits<br>in an <span class="grad">email attachment.</span></h1>
+      <p class="lead">Powerful everyday apps, built small. No account to create, nothing to install with admin rights, nothing sent to a server. Download, double-click, done.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#apps">Browse the apps</a>
+        <a class="btn btn-ghost" href="#request">Request one you need</a>
+      </div>
+      <ul class="stats" aria-label="Highlights">
+        <li><strong id="stat-apps">1</strong><span>apps available</span></li>
+        <li><strong id="stat-downloads">&ndash;</strong><span>downloads</span></li>
+        <li><strong>0</strong><span>accounts required</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="apps" class="section">
+    <div class="wrap">
+      <h2>Apps</h2>
+      <p class="sub">Every app is open source and free to use, change and share.</p>
+      <div id="app-grid" class="grid" aria-live="polite">
+        <p class="muted">Loading apps&hellip;</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="why" class="section alt">
+    <div class="wrap">
+      <h2>Why Open Source Hub</h2>
+      <div class="grid three">
+        <article class="card plain">
+          <h3>Tiny by design</h3>
+          <p>Our apps are measured in kilobytes and megabytes, not gigabytes. They start instantly and run on modest hardware.</p>
+        </article>
+        <article class="card plain">
+          <h3>Private by default</h3>
+          <p>Your documents stay on your device. The apps work offline and don&rsquo;t need you to sign in.</p>
+        </article>
+        <article class="card plain">
+          <h3>Open and checkable</h3>
+          <p>Read the source, verify each download&rsquo;s SHA-256 checksum, and build it yourself if you like.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="request" class="section">
+    <div class="wrap narrow">
+      <h2>Need an app that isn&rsquo;t here?</h2>
+      <p class="sub">Tell us what you need. Requests are reviewed, and apps we build are added to the download list.</p>
+      <form id="request-form" class="card form" novalidate>
+        <div class="field">
+          <label for="f-app">What should the app do? <span class="req">*</span></label>
+          <input id="f-app" name="app" type="text" maxlength="80" required placeholder="e.g. A lightweight spreadsheet that opens .xlsx">
+        </div>
+        <div class="field">
+          <label for="f-details">Details</label>
+          <textarea id="f-details" name="details" rows="5" maxlength="1000" placeholder="Who is it for, which features matter most, and which existing app is closest?"></textarea>
+          <small class="count"><span id="f-count">0</span>/1000</small>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="f-name">Your name (optional)</label>
+            <input id="f-name" name="name" type="text" maxlength="60" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="f-email">Email (optional, only to reply)</label>
+            <input id="f-email" name="email" type="email" maxlength="120" autocomplete="email">
+          </div>
+        </div>
+        <div class="hp" aria-hidden="true">
+          <label>Leave this empty <input id="f-web" name="website" type="text" tabindex="-1" autocomplete="off"></label>
+        </div>
+        <button class="btn btn-primary" type="submit" id="f-submit">Send request</button>
+        <p id="f-status" class="status" role="status"></p>
+        <p class="fine">We only use your details to respond to this request. See the <a href="privacy.html">privacy note</a>.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap foot-in">
+    <span>&copy; <span id="year"></span> Open Source Hub</span>
+    <span><a href="privacy.html">Privacy</a> &middot; <a id="repo-link" href="#top">Source on GitHub</a></span>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

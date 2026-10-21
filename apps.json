@@ -1,0 +1,15 @@
+[
+  {
+    "id": "docstudio-word-pro",
+    "name": "DocStudio Word Pro",
+    "icon": "📄",
+    "tagline": "A lightweight Word-style document editor that runs offline.",
+    "tags": ["Word processor", "DOCX", "PDF", "Offline"],
+    "size": "0.66 MB",
+    "platform": "Windows (Edge or any browser)",
+    "asset": "DocStudio-Word-Pro-UltraLight.zip",
+    "sha256": "",
+    "released": false,
+    "runOnline": ""
+  }
+]

@@ -40,12 +40,12 @@
     if (!cfg.firebase || !cfg.signIn) return;
     if (user) {
       var who = el("span", "who", user.displayName || user.email || "Signed in");
-      var out = el("button", "linkbtn", "Sign out");
+      var out = el("button", "btn-text", "Sign out");
       out.type = "button";
       out.addEventListener("click", function () { firebase().then(function (f) { return f.auth.signOut(f.a); }); });
       slot.appendChild(who); slot.appendChild(out);
     } else {
-      var inn = el("button", "linkbtn", "Sign in with Google");
+      var inn = el("button", "btn-text", "Sign in with Google");
       inn.type = "button";
       inn.addEventListener("click", function () {
         firebase().then(function (f) { return f.auth.signInWithPopup(f.a, new f.auth.GoogleAuthProvider()); })
@@ -98,32 +98,34 @@
       var card = el("article", "card app");
       var head = el("div", "app-head");
       head.appendChild(el("div", "app-icon", a.icon || "⬢"));
-      var t = el("div");
-      t.appendChild(el("h3", null, a.name));
-      t.appendChild(el("p", null, a.tagline));
+      var t = el("div", "app-titles");
+      t.appendChild(el("h3", "app-name", a.name));
+      t.appendChild(el("p", "app-tagline", a.tagline));
       head.appendChild(t);
       card.appendChild(head);
 
-      var tags = el("ul", "tags");
-      (a.tags || []).forEach(function (x) { tags.appendChild(el("li", null, x)); });
+      var tags = el("div", "tags");
+      if (a.size) tags.appendChild(el("span", "tag-chip size-badge", a.size));
+      (a.tags || []).forEach(function (x) { tags.appendChild(el("span", "tag-chip", x)); });
       card.appendChild(tags);
 
       var meta = el("div", "meta");
-      var s = el("span"); s.appendChild(document.createTextNode("Size ")); s.appendChild(el("b", null, a.size || "–")); meta.appendChild(s);
-      var p = el("span"); p.appendChild(document.createTextNode("For ")); p.appendChild(el("b", null, a.platform || "–")); meta.appendChild(p);
+      meta.appendChild(el("span", "meta-item", a.platform || "–"));
       var c = counts && typeof counts[a.asset] === "number" ? counts[a.asset] : null;
       if (c != null) { total += c; any = true; }
-      var d = el("span"); d.appendChild(document.createTextNode("Downloads ")); d.appendChild(el("b", null, fmt(c))); meta.appendChild(d);
+      meta.appendChild(el("span", "meta-item", fmt(c) + " downloads"));
       card.appendChild(meta);
 
       var actions = el("div", "app-actions");
-      var dl = el("a", "btn btn-primary", "Download");
+      var dl;
       if (repo && a.asset && a.released) {
+        dl = el("a", "btn btn-primary", "Download");
         dl.href = "https://github.com/" + repo + "/releases/latest/download/" + encodeURIComponent(a.asset);
         dl.rel = "noopener";
         dl.addEventListener("click", function () { logDownload(a.id || a.name); });
       } else {
-        dl.href = "#request"; dl.textContent = "Coming soon";
+        dl = el("button", "btn btn-primary", "Coming soon");
+        dl.type = "button"; dl.disabled = true; dl.setAttribute("aria-disabled", "true");
       }
       actions.appendChild(dl);
       if (a.runOnline && /^https:\/\//.test(a.runOnline)) {
@@ -132,7 +134,11 @@
         actions.appendChild(run);
       }
       card.appendChild(actions);
-      if (a.sha256 && /^[a-f0-9]{64}$/i.test(a.sha256)) card.appendChild(el("div", "sha", "SHA-256: " + a.sha256));
+      if (a.sha256 && /^[a-f0-9]{64}$/i.test(a.sha256)) {
+        var sha = el("div", "sha");
+        sha.appendChild(el("code", null, "SHA-256: " + a.sha256));
+        card.appendChild(sha);
+      }
       grid.appendChild(card);
     });
     document.getElementById("stat-apps").textContent = String(apps.length);
@@ -160,7 +166,7 @@
   var counter = document.getElementById("f-count");
   details.addEventListener("input", function () { counter.textContent = String(details.value.length); });
 
-  function say(msg, ok) { status.textContent = msg; status.className = "status " + (ok ? "ok" : "err"); }
+  function say(msg, ok) { status.textContent = msg; status.className = "form-status " + (ok ? "is-success" : "is-error"); }
   function lastSent() { try { return Number(localStorage.getItem("hub-last-req") || 0); } catch (e) { return 0; } }
   function markSent() { try { localStorage.setItem("hub-last-req", String(Date.now())); } catch (e) {} }
 

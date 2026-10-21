@@ -8,8 +8,8 @@
     "size": "1.0 MB",
     "platform": "Windows (Edge or any browser)",
     "asset": "DocStudio-Word-Pro-UltraLight.zip",
-    "sha256": "",
-    "released": false,
+    "sha256": "baf4a66f7b3997d8442ad882bd23b1fa83e0497a4a29b1cf6730d3cd81613a3e",
+    "released": true,
     "runOnline": ""
   }
 ]

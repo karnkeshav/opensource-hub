@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com https://firestore.googleapis.com https://*.googleapis.com; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://apis.google.com; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com https://formspree.io https://*.googleapis.com; frame-src https://accounts.google.com https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Open Source Hub</title>
 <meta name="description" content="Tiny, free, open-source apps that run offline. No account, no tracking, no bloat.">
@@ -21,6 +21,7 @@
     <nav aria-label="Primary">
       <a href="#apps">Apps</a>
       <a href="#why">Why</a>
+      <span id="auth-slot" class="auth"></span>
       <a href="#request" class="btn btn-small">Request an app</a>
     </nav>
   </div>

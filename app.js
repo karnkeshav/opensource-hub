@@ -37,7 +37,7 @@
   var slot = document.getElementById("auth-slot");
   function renderAuth() {
     slot.textContent = "";
-    if (!cfg.firebase) return;
+    if (!cfg.firebase || !cfg.signIn) return;
     if (user) {
       var who = el("span", "who", user.displayName || user.email || "Signed in");
       var out = el("button", "linkbtn", "Sign out");
@@ -54,7 +54,7 @@
       slot.appendChild(inn);
     }
   }
-  if (cfg.firebase) {
+  if (cfg.firebase && cfg.signIn) {
     renderAuth();
     firebase().then(function (f) {
       f.auth.onAuthStateChanged(f.a, function (u) { user = u; renderAuth(); });

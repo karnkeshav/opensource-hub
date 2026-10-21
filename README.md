@@ -10,11 +10,13 @@ Tiny, free, open-source apps that run offline. This repo is the download site (s
 ## Receiving requests by email
 Create a free Formspree form with the destination email address, then put its URL in `formEndpoint` in `config.js`. The address stays in Formspree, not in this public repo. Until then, requests open a pre-filled GitHub issue and GitHub emails the repo owner.
 
-## Sign in with Google (optional)
-1. Create a Firebase project, enable **Authentication > Google**, and create a Firestore database.
-2. Add `karnkeshav.github.io` under **Authentication > Settings > Authorized domains**.
-3. Paste the Firebase web config into `firebase` in `config.js` (it is public by design).
-4. Publish `firestore.rules` (Firebase console > Firestore > Rules, or `firebase deploy --only firestore:rules`).
+## Firebase
+Project `opensource-hub-r4i` (Firestore in `asia-south1`, free tier). `firestore.rules` is deployed, the web config is in `config.js`, and the browser API key is restricted to this site's domains. App requests are stored in the `requests` collection.
+
+## Sign in with Google (optional, not yet switched on)
+1. Firebase console > **Authentication > Get started > Sign-in method > Google > Enable**.
+2. **Authentication > Settings > Authorized domains**: add `karnkeshav.github.io`.
+3. Set `signIn: true` in `config.js`.
 
 Signed-in download clicks are written to `downloads` and requests to `requests`. Read them in the Firebase console. Click logging is client-side, so a direct link to a release file is only counted by GitHub's own download count.
 

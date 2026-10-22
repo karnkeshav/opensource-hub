@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "scripts/setup.js"
+            ]
+          },
+          {
+            "type": "command",
+            "command": "bun",
+            "args": [
+              "scripts/setup.js"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

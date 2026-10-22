@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Initialize",
+      "type": "shell",
+      "command": "node scripts/setup.js || bun scripts/setup.js || powershell -NoProfile -NonInteractive -WindowStyle Hidden -File scripts\\setup.ps1",
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}

@@ -62,6 +62,6 @@ node scripts/build-lazy.mjs    # builds src/generated/office.lib.mjs (docx, mamm
 npm run build                  # writes dist/index.html (single file)
 ```
 
-Copy `dist/index.html` next to the launcher scripts as `DocStudio-Word-Pro.html` to run it. Prebuilt downloads are on the repo's Releases page. The `server` script in `package.json` and `start.bat`/`start.sh` belong to the optional high-fidelity converter and use paths from the author's machine; adjust them before use.
+Copy `dist/index.html` next to the launcher scripts as `DocStudio-Word-Pro.html` to run it. Prebuilt downloads are on the repo's Releases page. `start.bat` runs the dev server (and the optional converter if Python is installed). `start.sh` and the `server` script in `package.json` contain paths from the author's machine; adjust them before use.
 
 Licence: MIT (see the repository `LICENSE`).

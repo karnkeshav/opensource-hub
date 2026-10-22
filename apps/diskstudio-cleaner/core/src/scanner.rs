@@ -401,6 +401,16 @@ impl<'a> Scanner<'a> {
         root: &Path,
         top_n: usize,
     ) -> Result<BiggestDiskUsage, crate::fs::FsError> {
+        self.scan_biggest_with_progress(root, top_n, None)
+    }
+
+    /// Fast streaming Top-N largest files and folder aggregations with progress reporting
+    pub fn scan_biggest_with_progress(
+        &self,
+        root: &Path,
+        top_n: usize,
+        progress: Option<&dyn Fn(&str, usize, u64)>,
+    ) -> Result<BiggestDiskUsage, crate::fs::FsError> {
         let mut heap: BinaryHeap<Reverse<(u64, PathBuf, Option<u64>, bool)>> =
             BinaryHeap::with_capacity(top_n + 1);
         let mut folder_sizes: HashMap<PathBuf, (u64, usize)> = HashMap::new();
@@ -412,6 +422,10 @@ impl<'a> Scanner<'a> {
         while let Some(dir) = stack.pop() {
             if self.is_cancelled() {
                 break;
+            }
+
+            if let Some(cb) = progress {
+                cb(&dir.to_string_lossy(), total_files, total_bytes);
             }
 
             let entries = match self.fs.read_dir(&dir) {

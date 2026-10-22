@@ -67,6 +67,18 @@ pub trait ReadFs: Send + Sync {
         self.metadata(path).map(|m| m.is_dir).unwrap_or(false)
     }
     fn canonicalize(&self, path: &Path) -> Result<PathBuf, FsError>;
+    fn read_bytes(&self, path: &Path, max_bytes: usize) -> Result<Vec<u8>, FsError> {
+        let meta = self.metadata(path)?;
+        if meta.is_reparse_point {
+            return Err(FsError::ReparsePointRefused(path.display().to_string()));
+        }
+        use std::io::Read;
+        let mut file = std::fs::File::open(path).map_err(|e| FsError::Other(e.to_string()))?;
+        let mut buf = vec![0u8; max_bytes];
+        let n = file.read(&mut buf).map_err(|e| FsError::Other(e.to_string()))?;
+        buf.truncate(n);
+        Ok(buf)
+    }
 }
 
 pub trait WriteFs: ReadFs {
@@ -350,6 +362,7 @@ pub enum FakeNode {
         cloud_placeholder: bool,
         in_use: bool,
         access_denied: bool,
+        content: Option<Vec<u8>>,
     },
     Dir {
         access_denied: bool,
@@ -400,6 +413,23 @@ impl FakeFs {
                 cloud_placeholder: false,
                 in_use: false,
                 access_denied: false,
+                content: None,
+            },
+        );
+    }
+
+    pub fn add_file_with_content(&self, path: impl AsRef<Path>, content: &[u8], modified: SystemTime) {
+        let mut st = self.state.write().unwrap();
+        st.nodes.insert(
+            path.as_ref().to_path_buf(),
+            FakeNode::File {
+                size: content.len() as u64,
+                modified,
+                readonly: false,
+                cloud_placeholder: false,
+                in_use: false,
+                access_denied: false,
+                content: Some(content.to_vec()),
             },
         );
     }
@@ -485,6 +515,7 @@ impl ReadFs for FakeFs {
                 cloud_placeholder,
                 in_use: _,
                 access_denied,
+                ..
             } => {
                 if *access_denied {
                     return Err(FsError::AccessDenied(path.display().to_string()));
@@ -589,6 +620,39 @@ impl ReadFs for FakeFs {
             Ok(path.to_path_buf())
         } else {
             Err(FsError::NotFound(path.display().to_string()))
+        }
+    }
+
+    fn read_bytes(&self, path: &Path, max_bytes: usize) -> Result<Vec<u8>, FsError> {
+        let st = self.state.read().unwrap();
+        let node = st
+            .nodes
+            .get(path)
+            .ok_or_else(|| FsError::NotFound(path.display().to_string()))?;
+
+        match node {
+            FakeNode::File {
+                access_denied,
+                content,
+                size,
+                ..
+            } => {
+                if *access_denied {
+                    return Err(FsError::AccessDenied(path.display().to_string()));
+                }
+                if let Some(c) = content {
+                    let take = c.len().min(max_bytes);
+                    Ok(c[..take].to_vec())
+                } else {
+                    let mut buf = Vec::new();
+                    let seed = path.to_string_lossy();
+                    for (i, b) in seed.bytes().cycle().take((*size as usize).min(max_bytes)).enumerate() {
+                        buf.push(b ^ ((i % 256) as u8));
+                    }
+                    Ok(buf)
+                }
+            }
+            FakeNode::Dir { .. } => Err(FsError::Other("Cannot read bytes from directory".into())),
         }
     }
 }

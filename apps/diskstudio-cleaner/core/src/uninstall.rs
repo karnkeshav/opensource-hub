@@ -512,6 +512,269 @@ pub fn is_apple_system_app(bundle_id: &str) -> bool {
     false
 }
 
+/// Discovers installed software across Windows, macOS, and Linux
+/// Enforces Section 8.1 filtering (hides system components, drivers, and runtime parts)
+pub fn discover_installed_apps(env: &EnvironmentRoots, fs: &dyn ReadFs) -> Vec<InstalledApp> {
+    let mut apps: Vec<InstalledApp> = Vec::new();
+
+    // 1. Windows: Try querying installed programs via PowerShell registry lookup
+    #[cfg(windows)]
+    {
+        apps.extend(discover_windows_installed_apps(env, fs));
+    }
+
+    // 2. macOS: Scan /Applications and ~/Applications
+    let macos_roots = [
+        PathBuf::from("/Applications"),
+        env.user_profile.join("Applications"),
+    ];
+    for app_root in &macos_roots {
+        if fs.exists(app_root) {
+            if let Ok(entries) = fs.read_dir(app_root) {
+                for entry in entries {
+                    if entry.metadata.is_dir && entry.path.extension().map_or(false, |ext| ext == "app") {
+                        let app_name = entry
+                            .path
+                            .file_stem()
+                            .map(|s| s.to_string_lossy().to_string())
+                            .unwrap_or_else(|| "Unknown App".into());
+                        let bundle_id = format!("com.apple.local.{}", app_name.to_ascii_lowercase());
+
+                        if is_apple_system_app(&bundle_id) || is_apple_system_app(&app_name) {
+                            continue;
+                        }
+
+                        let size = measure_dir_size(fs, &entry.path);
+                        apps.push(InstalledApp {
+                            id: bundle_id,
+                            display_name: app_name,
+                            display_version: None,
+                            publisher: Some("macOS Application".into()),
+                            install_location: Some(entry.path.clone()),
+                            install_date: None,
+                            estimated_size_bytes: size,
+                            uninstall_string: None,
+                            quiet_uninstall_string: None,
+                            is_msi: false,
+                            is_system_component: false,
+                            parent_key_name: None,
+                            app_type: AppType::Portable,
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    // 3. Fallback / Cross-platform folder scanning for Program Files & LocalAppData
+    let win_program_folders = [
+        env.program_files.clone(),
+        env.program_files_x86.clone(),
+        env.user_profile.join("AppData\\Local\\Programs"),
+    ];
+    for pdir in &win_program_folders {
+        if fs.exists(pdir) {
+            if let Ok(entries) = fs.read_dir(pdir) {
+                for entry in entries {
+                    if !entry.metadata.is_dir || entry.metadata.is_reparse_point {
+                        continue;
+                    }
+                    let folder_name = entry
+                        .path
+                        .file_name()
+                        .map(|s| s.to_string_lossy().to_string())
+                        .unwrap_or_default();
+
+                    // Skip system / common folders
+                    let lower = folder_name.to_ascii_lowercase();
+                    if lower == "common files" || lower == "windows nt" || lower == "microsoft" || lower == "windows mail" || lower == "windows media player" {
+                        continue;
+                    }
+
+                    // Check if already in list
+                    if apps.iter().any(|a| a.display_name.eq_ignore_ascii_case(&folder_name)) {
+                        continue;
+                    }
+
+                    let size = measure_dir_size(fs, &entry.path);
+                    if size < 1024 * 1024 {
+                        // Skip trivial folders under 1MB
+                        continue;
+                    }
+
+                    // Look for uninstall executable inside
+                    let mut uninst_str = None;
+                    if let Ok(sub_entries) = fs.read_dir(&entry.path) {
+                        for sub in sub_entries {
+                            let fname = sub.path.file_name().map(|n| n.to_string_lossy().to_ascii_lowercase()).unwrap_or_default();
+                            if fname.starts_with("unins") || fname.starts_with("uninstall") {
+                                uninst_str = Some(format!("\"{}\"", sub.path.display()));
+                                break;
+                            }
+                        }
+                    }
+
+                    apps.push(InstalledApp {
+                        id: format!("folder-{}", folder_name),
+                        display_name: folder_name,
+                        display_version: None,
+                        publisher: None,
+                        install_location: Some(entry.path.clone()),
+                        install_date: None,
+                        estimated_size_bytes: size,
+                        uninstall_string: uninst_str.clone(),
+                        quiet_uninstall_string: uninst_str,
+                        is_msi: false,
+                        is_system_component: false,
+                        parent_key_name: None,
+                        app_type: AppType::Exe,
+                    });
+                }
+            }
+        }
+    }
+
+    // 4. Linux desktop applications
+    let linux_app_dirs = [
+        PathBuf::from("/usr/share/applications"),
+        env.user_profile.join(".local/share/applications"),
+    ];
+    for adir in &linux_app_dirs {
+        if fs.exists(adir) {
+            if let Ok(entries) = fs.read_dir(adir) {
+                for entry in entries {
+                    if entry.path.extension().map_or(false, |ext| ext == "desktop") {
+                        let fname = entry.path.file_stem().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
+                        if !fname.is_empty() && !apps.iter().any(|a| a.display_name.eq_ignore_ascii_case(&fname)) {
+                            apps.push(InstalledApp {
+                                id: format!("desktop-{}", fname),
+                                display_name: fname,
+                                display_version: None,
+                                publisher: Some("Linux Desktop Entry".into()),
+                                install_location: None,
+                                install_date: None,
+                                estimated_size_bytes: 50 * 1024 * 1024,
+                                uninstall_string: None,
+                                quiet_uninstall_string: None,
+                                is_msi: false,
+                                is_system_component: false,
+                                parent_key_name: None,
+                                app_type: AppType::Portable,
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Filter out denied components and sort by size descending
+    let mut filtered: Vec<InstalledApp> = apps
+        .into_iter()
+        .filter(|a| !is_denied_or_system_app(a))
+        .collect();
+
+    filtered.sort_by(|a, b| b.estimated_size_bytes.cmp(&a.estimated_size_bytes));
+    filtered
+}
+
+fn measure_dir_size(fs: &dyn ReadFs, root: &Path) -> u64 {
+    let mut size = 0u64;
+    let mut stack = vec![root.to_path_buf()];
+    let mut depth = 0;
+
+    while let Some(dir) = stack.pop() {
+        depth += 1;
+        if depth > 1000 {
+            break;
+        }
+        if let Ok(entries) = fs.read_dir(&dir) {
+            for entry in entries {
+                if entry.metadata.is_reparse_point {
+                    continue;
+                }
+                if entry.metadata.is_dir {
+                    stack.push(entry.path);
+                } else {
+                    size += entry.metadata.len;
+                }
+            }
+        }
+    }
+    size
+}
+
+#[cfg(windows)]
+fn discover_windows_installed_apps(_env: &EnvironmentRoots, fs: &dyn ReadFs) -> Vec<InstalledApp> {
+    let mut list = Vec::new();
+    let ps_cmd = r#"Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*, HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*, HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object { $_.DisplayName } | Select-Object PSChildName, DisplayName, DisplayVersion, Publisher, InstallLocation, InstallDate, EstimatedSize, UninstallString, QuietUninstallString, WindowsInstaller, SystemComponent | ConvertTo-Json -Compress"#;
+
+    if let Ok(output) = std::process::Command::new("powershell")
+        .args(["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command", ps_cmd])
+        .output()
+    {
+        if output.status.success() {
+            if let Ok(json_str) = String::from_utf8(output.stdout) {
+                if let Ok(val) = serde_json::from_str::<serde_json::Value>(&json_str) {
+                    let items = if let Some(arr) = val.as_array() {
+                        arr.clone()
+                    } else if val.is_object() {
+                        vec![val]
+                    } else {
+                        Vec::new()
+                    };
+
+                    for it in items {
+                        let name = match it.get("DisplayName").and_then(|v| v.as_str()) {
+                            Some(n) if !n.trim().is_empty() => n.trim().to_string(),
+                            _ => continue,
+                        };
+                        let id = it.get("PSChildName").and_then(|v| v.as_str()).unwrap_or(&name).to_string();
+                        let ver = it.get("DisplayVersion").and_then(|v| v.as_str()).map(|s| s.to_string());
+                        let publ = it.get("Publisher").and_then(|v| v.as_str()).map(|s| s.to_string());
+                        let loc = it.get("InstallLocation").and_then(|v| v.as_str()).map(PathBuf::from);
+                        let date = it.get("InstallDate").and_then(|v| v.as_str()).map(|s| s.to_string());
+                        let uninst = it.get("UninstallString").and_then(|v| v.as_str()).map(|s| s.to_string());
+                        let quiet = it.get("QuietUninstallString").and_then(|v| v.as_str()).map(|s| s.to_string());
+                        let is_msi = it.get("WindowsInstaller").and_then(|v| v.as_i64()).unwrap_or(0) == 1;
+                        let sys_comp = it.get("SystemComponent").and_then(|v| v.as_i64()).unwrap_or(0) == 1;
+
+                        // Estimated size in KB converted to bytes
+                        let est_kb = it.get("EstimatedSize").and_then(|v| v.as_u64()).unwrap_or(0);
+                        let mut size_bytes = est_kb * 1024;
+
+                        // If size is 0 and install location exists, measure it
+                        if size_bytes == 0 {
+                            if let Some(p) = &loc {
+                                if fs.exists(p) {
+                                    size_bytes = measure_dir_size(fs, p);
+                                }
+                            }
+                        }
+
+                        list.push(InstalledApp {
+                            id,
+                            display_name: name,
+                            display_version: ver,
+                            publisher: publ,
+                            install_location: loc,
+                            install_date: date,
+                            estimated_size_bytes: size_bytes,
+                            uninstall_string: uninst,
+                            quiet_uninstall_string: quiet,
+                            is_msi,
+                            is_system_component: sys_comp,
+                            parent_key_name: None,
+                            app_type: if is_msi { AppType::Msi } else { AppType::Exe },
+                        });
+                    }
+                }
+            }
+        }
+    }
+    list
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

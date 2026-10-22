@@ -4,36 +4,118 @@
     "name": "DocStudio Word Pro",
     "icon": "📄",
     "tagline": "A lightweight Word-style document editor that runs offline.",
-    "tags": ["Word processor", "DOCX", "PDF", "Offline"],
+    "tags": [
+      "Word processor",
+      "DOCX",
+      "PDF",
+      "Offline"
+    ],
     "size": "1.0 MB",
-    "platform": "Windows (Edge or any browser)",
-    "asset": "DocStudio-Word-Pro-UltraLight.zip",
-    "sha256": "baf4a66f7b3997d8442ad882bd23b1fa83e0497a4a29b1cf6730d3cd81613a3e",
+    "platform": "Windows, macOS & Linux (opens in Chrome or Edge)",
+    "asset": "DocStudio-Word-Pro-Windows.zip",
+    "sha256": "4144194a872deaf65a5bba39f9024dc8586d7b092a342eefe4c888188df3e931",
     "released": true,
     "runOnline": "",
-    "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/docstudio-word-pro"
+    "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/docstudio-word-pro",
+    "tag": "v1.0.0",
+    "downloads": [
+      {
+        "os": "Windows",
+        "icon": "🪟",
+        "name": "Windows",
+        "badge": "Windows 10/11",
+        "file": ".zip",
+        "size": "1003 KB",
+        "asset": "DocStudio-Word-Pro-Windows.zip",
+        "sha256": "4144194a872deaf65a5bba39f9024dc8586d7b092a342eefe4c888188df3e931"
+      },
+      {
+        "os": "macOS",
+        "icon": "🍎",
+        "name": "macOS",
+        "badge": "macOS 11+",
+        "file": ".zip",
+        "size": "1003 KB",
+        "asset": "DocStudio-Word-Pro-macOS.zip",
+        "sha256": "73bcd36d35164fc1d1f921f734baea6efeb7d1d29373071a58c77d206debc69b"
+      },
+      {
+        "os": "Linux",
+        "icon": "🐧",
+        "name": "Linux",
+        "badge": "Any distro",
+        "file": ".tar.gz",
+        "size": "1003 KB",
+        "asset": "DocStudio-Word-Pro-Linux.tar.gz",
+        "sha256": "f62c433dd6a20eacc4dc016ac203bd660db1f33e0326e2b4fef37d5cabc48a88"
+      }
+    ]
   },
   {
     "id": "sheetstudio-excel-pro",
     "name": "SheetStudio Excel Pro",
     "icon": "📊",
     "tagline": "An offline spreadsheet with tables, live pivots, charts and queries that reads and writes .xlsx.",
-    "tags": ["Spreadsheet", "XLSX", "Charts", "Offline"],
+    "tags": [
+      "Spreadsheet",
+      "XLSX",
+      "Charts",
+      "Offline"
+    ],
     "size": "276 KB",
-    "platform": "Any modern browser (Chrome / Edge recommended)",
-    "asset": "SheetStudio-Excel-Pro.html",
-    "sha256": "7f54e02c9b28018c6f4ae99d6063134535fe5bd67b64095c6d23e928485d8594",
+    "platform": "Windows, macOS & Linux (opens in Chrome or Edge)",
+    "asset": "SheetStudio-Excel-Pro-Windows.zip",
+    "sha256": "db9d03b7dd3d629ab067bdea3f6c0a15f3ecef7540bad6061ffce6a90608e8f5",
     "tag": "sheetstudio-excel-pro-v1.0.0",
     "released": true,
     "runOnline": "",
-    "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/sheetstudio-excel-pro"
+    "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/sheetstudio-excel-pro",
+    "downloads": [
+      {
+        "os": "Windows",
+        "icon": "🪟",
+        "name": "Windows",
+        "badge": "Windows 10/11",
+        "file": ".zip",
+        "size": "99 KB",
+        "asset": "SheetStudio-Excel-Pro-Windows.zip",
+        "sha256": "db9d03b7dd3d629ab067bdea3f6c0a15f3ecef7540bad6061ffce6a90608e8f5"
+      },
+      {
+        "os": "macOS",
+        "icon": "🍎",
+        "name": "macOS",
+        "badge": "macOS 11+",
+        "file": ".zip",
+        "size": "99 KB",
+        "asset": "SheetStudio-Excel-Pro-macOS.zip",
+        "sha256": "32651341a3ee10b88137a5a741cc474dda4f86506434321d2731a8533ba25825"
+      },
+      {
+        "os": "Linux",
+        "icon": "🐧",
+        "name": "Linux",
+        "badge": "Any distro",
+        "file": ".tar.gz",
+        "size": "99 KB",
+        "asset": "SheetStudio-Excel-Pro-Linux.tar.gz",
+        "sha256": "f532410b5ba5b5fac13aef798d06987460a7eec31a0d6a9c6450cdb98c5971ed"
+      }
+    ]
   },
   {
     "id": "diskstudio-cleaner",
     "name": "DiskStudio Cleaner",
     "icon": "🧹",
     "tagline": "Safe, transparent disk cleaner and space manager. Zero telemetry, no background services, never touches user files.",
-    "tags": ["Disk cleaner", "Privacy", "Offline", "Windows", "macOS", "Linux"],
+    "tags": [
+      "Disk cleaner",
+      "Privacy",
+      "Offline",
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
     "size": "2.3 MB – 3.3 MB",
     "platform": "Windows, macOS & Linux",
     "asset": "DiskStudio-Cleaner-Windows-x64.exe",
@@ -80,13 +162,51 @@
     "name": "SlideStudio PowerPoint Pro",
     "icon": "🎞️",
     "tagline": "An offline, outline-first presentation app: type an outline, get auto-laid-out, accessible slides. Reads and writes .pptx.",
-    "tags": ["Presentations", "PPTX", "Outline", "Offline"],
+    "tags": [
+      "Presentations",
+      "PPTX",
+      "Outline",
+      "Offline"
+    ],
     "size": "147 KB",
-    "platform": "Any modern browser (Chrome / Edge recommended)",
-    "asset": "SlideStudio-PowerPoint-Pro.html",
-    "sha256": "",
-    "released": false,
+    "platform": "Windows, macOS & Linux (opens in Chrome or Edge)",
+    "asset": "SlideStudio-PowerPoint-Pro-Windows.zip",
+    "sha256": "2de5b6af3e27d03dfa9ff1f8e9391fac0298467d1f97bcf25dfbe1629101d758",
+    "released": true,
     "runOnline": "",
-    "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/slidestudio-powerpoint-pro"
+    "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/slidestudio-powerpoint-pro",
+    "tag": "slidestudio-powerpoint-pro-v1.0.0",
+    "downloads": [
+      {
+        "os": "Windows",
+        "icon": "🪟",
+        "name": "Windows",
+        "badge": "Windows 10/11",
+        "file": ".zip",
+        "size": "57 KB",
+        "asset": "SlideStudio-PowerPoint-Pro-Windows.zip",
+        "sha256": "2de5b6af3e27d03dfa9ff1f8e9391fac0298467d1f97bcf25dfbe1629101d758"
+      },
+      {
+        "os": "macOS",
+        "icon": "🍎",
+        "name": "macOS",
+        "badge": "macOS 11+",
+        "file": ".zip",
+        "size": "57 KB",
+        "asset": "SlideStudio-PowerPoint-Pro-macOS.zip",
+        "sha256": "8df1a19a0aa0830940291f68a44266d1955bf408f4da3daf2a9a92a28cdd919a"
+      },
+      {
+        "os": "Linux",
+        "icon": "🐧",
+        "name": "Linux",
+        "badge": "Any distro",
+        "file": ".tar.gz",
+        "size": "57 KB",
+        "asset": "SlideStudio-PowerPoint-Pro-Linux.tar.gz",
+        "sha256": "682a3f50f269894b75e86376ccf0682245fb3205ecceb87b0b4031ba8a3363df"
+      }
+    ]
   }
 ]

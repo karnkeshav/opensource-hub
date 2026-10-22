@@ -1,0 +1,16 @@
+{
+  "name": "slidestudio-powerpoint-pro",
+  "version": "1.0.0",
+  "description": "SlideStudio PowerPoint Pro - an offline, outline-first presentation app in one small HTML file",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs",
+    "corpus": "node test/corpus.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

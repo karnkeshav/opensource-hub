@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SlideStudio PowerPoint Pro</title>
+<meta name="description" content="A free, offline, outline-first presentation app in one small HTML file. Reads and writes .pptx.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src 'none'; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<style>/*CSS*/</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand"><span class="logo" aria-hidden="true">&#9654;</span> SlideStudio <b>PowerPoint Pro</b></div>
+    <input id="title" class="title" value="Untitled presentation" aria-label="Presentation name" spellcheck="false">
+    <span id="saved" class="muted" aria-live="polite"></span>
+    <div class="grow"></div>
+    <button id="b-pal" class="rb" type="button" title="Command palette (Ctrl+K)">Commands <kbd>Ctrl K</kbd></button>
+    <button id="b-ui" class="rb" type="button" title="Light / dark interface" aria-label="Light or dark interface">&#9680;</button>
+    <button id="b-play" class="btn primary" type="button" title="Present from this slide (Shift+F5)">&#9654; Present</button>
+  </header>
+  <div id="bar" role="toolbar" aria-label="Commands"></div>
+  <main id="main">
+    <section id="op" aria-label="Outline">
+      <div class="ph"><b>Outline</b> <span class="muted"># slide · - bullet · ## subtitle · ### column · ![](img) · | table | · &gt; quote · ```flow · :: notes</span></div>
+      <textarea id="outline" spellcheck="true" aria-label="Outline. Each line starting with # is a new slide."></textarea>
+    </section>
+    <nav id="rail" tabindex="0" aria-label="Slides" role="listbox"><div id="rs"></div></nav>
+    <section id="center">
+      <div id="sw" tabindex="0" aria-label="Slide editor. Click to select, double-click to edit, arrows to nudge."></div>
+      <textarea id="notes" placeholder="Speaker notes" aria-label="Speaker notes"></textarea>
+    </section>
+    <div id="sorter" tabindex="0" hidden aria-label="Slide sorter" role="listbox"><div id="ss"></div></div>
+    <aside id="side" hidden aria-label="Panel"></aside>
+  </main>
+  <footer>
+    <button id="b-prev" class="rb sm" type="button" title="Previous slide (Page Up)" aria-label="Previous slide">&#9664;</button><button id="b-next" class="rb sm" type="button" title="Next slide (Page Down)" aria-label="Next slide">&#9654;</button>
+    <span id="st"></span><span class="muted">·</span><span id="lay" class="muted"></span>
+    <div class="grow"></div>
+    <button id="b-chk" class="rb sm" type="button" title="Check the deck (Alt+C)"></button>
+    <input id="zoom" type="range" min="25" max="300" value="100" aria-label="Zoom">
+  </footer>
+</div>
+<div id="live" class="sr" aria-live="polite"></div>
+<input id="filein" type="file" hidden accept=".pptx,.ppsx,.potx,.slidestudio,.md,.markdown,.txt,.json">
+<input id="imgin" type="file" hidden accept="image/*" multiple>
+<script>/*JS*/</script>
+</body>
+</html>

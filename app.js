@@ -186,66 +186,7 @@
           run.href = a.runOnline; run.rel = "noopener";
           actions.appendChild(run);
         }
-        if (a.source && /^https:\/\/github\.com\//.test(a.source)) {
-          var src = el("a", "btn btn-ghost", "Source");
-          src.href = a.source; src.rel = "noopener"; src.target = "_blank";
-          actions.appendChild(src);
-        }
-        card.appendChild(actions);
-
-        // Tabbed cryptographic SHA-256 box for multi-platform
-        var shaContainer = el("div", "sha-container");
-        var shaHeader = el("div", "sha-header");
-        shaHeader.appendChild(el("span", "sha-title", "Verified SHA-256 Checksums:"));
-
-        var tabs = el("div", "sha-tabs");
-        var activeDownload = a.downloads.find(function (d) { return d.os === detectedOS; }) || a.downloads[0];
-
-        var shaBox = el("div", "sha");
-        var code = el("code", null, activeDownload.os + ": " + activeDownload.sha256);
-        code.title = "Click to copy " + activeDownload.os + " SHA-256 checksum";
-        shaBox.appendChild(code);
-
-        var copyBtn = el("button", "btn-copy-sha", "Copy");
-        copyBtn.type = "button";
-        copyBtn.setAttribute("aria-label", "Copy SHA-256 checksum");
-
-        var doCopy = function (hash) {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(hash).then(function () {
-              copyBtn.textContent = "Copied ✓";
-              copyBtn.className = "btn-copy-sha copied";
-              setTimeout(function () {
-                copyBtn.textContent = "Copy";
-                copyBtn.className = "btn-copy-sha";
-              }, 2000);
-            }).catch(function () {});
-          }
-        };
-
-        var curHash = activeDownload.sha256;
-        copyBtn.addEventListener("click", function () { doCopy(curHash); });
-        code.addEventListener("click", function () { doCopy(curHash); });
-        shaBox.appendChild(copyBtn);
-
-        a.downloads.forEach(function (d) {
-          var tabBtn = el("button", "sha-tab" + (d === activeDownload ? " active" : ""), d.icon + " " + d.os);
-          tabBtn.type = "button";
-          tabBtn.addEventListener("click", function () {
-            tabs.querySelectorAll(".sha-tab").forEach(function (t) { t.classList.remove("active"); });
-            tabBtn.classList.add("active");
-            curHash = d.sha256;
-            code.textContent = d.os + ": " + d.sha256;
-            code.title = "Click to copy " + d.os + " SHA-256 checksum";
-          });
-          tabs.appendChild(tabBtn);
-        });
-
-        shaHeader.appendChild(tabs);
-        shaContainer.appendChild(shaHeader);
-        shaContainer.appendChild(shaBox);
-        card.appendChild(shaContainer);
-
+        if (actions.childNodes.length) card.appendChild(actions);
       } else {
         // Standard single-asset download action
         var actions = el("div", "app-actions");
@@ -265,39 +206,7 @@
           run.href = a.runOnline; run.rel = "noopener";
           actions.appendChild(run);
         }
-        if (a.source && /^https:\/\/github\.com\//.test(a.source)) {
-          var src = el("a", "btn btn-ghost", "Source");
-          src.href = a.source; src.rel = "noopener"; src.target = "_blank";
-          actions.appendChild(src);
-        }
         card.appendChild(actions);
-
-        if (a.sha256 && /^[a-f0-9]{64}$/i.test(a.sha256)) {
-          var sha = el("div", "sha");
-          var code = el("code", null, "SHA-256: " + a.sha256);
-          code.title = "Click to copy full SHA-256 checksum";
-          sha.appendChild(code);
-
-          var copyBtn = el("button", "btn-copy-sha", "Copy");
-          copyBtn.type = "button";
-          copyBtn.setAttribute("aria-label", "Copy SHA-256 checksum");
-          var handleCopy = function () {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-              navigator.clipboard.writeText(a.sha256).then(function () {
-                copyBtn.textContent = "Copied ✓";
-                copyBtn.className = "btn-copy-sha copied";
-                setTimeout(function () {
-                  copyBtn.textContent = "Copy";
-                  copyBtn.className = "btn-copy-sha";
-                }, 2000);
-              }).catch(function () {});
-            }
-          };
-          copyBtn.addEventListener("click", handleCopy);
-          code.addEventListener("click", handleCopy);
-          sha.appendChild(copyBtn);
-          card.appendChild(sha);
-        }
       }
       grid.appendChild(card);
     });

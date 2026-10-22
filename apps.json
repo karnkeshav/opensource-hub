@@ -224,7 +224,7 @@
     "platform": "Windows, macOS & Linux (opens in Chrome or Edge)",
     "asset": "PDFStudio-Acrobat-Pro-Windows.zip",
     "sha256": "997dc8b026b77fda5087aa6d1e86064c278c2ab373fc5210794a995052b676c7",
-    "released": false,
+    "released": true,
     "runOnline": "",
     "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/pdfstudio-acrobat-pro",
     "tag": "pdfstudio-acrobat-pro-v1.0.0",

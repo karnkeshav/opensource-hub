@@ -1,0 +1,62 @@
+[[rule]]
+id = "browser-cache-chrome"
+category = "browser-caches"
+title = "Google Chrome cache"
+description = "Saved copies of web pages and code cache. Chrome re-downloads them as needed."
+risk = "safe"
+action = "delete"
+paths = [
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Cache\\*",
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Code Cache\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["chrome.exe"]
+
+[[rule]]
+id = "browser-cache-edge"
+category = "browser-caches"
+title = "Microsoft Edge cache"
+description = "Cached web pages and scripts. Edge fetches fresh copies automatically."
+risk = "safe"
+action = "delete"
+paths = [
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Cache\\*",
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Code Cache\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["msedge.exe"]
+
+[[rule]]
+id = "browser-cache-firefox"
+category = "browser-caches"
+title = "Mozilla Firefox cache"
+description = "Cached website data. Firefox re-downloads when visiting pages."
+risk = "safe"
+action = "delete"
+paths = [
+    "%LOCALAPPDATA%\\Mozilla\\Firefox\\Profiles\\*\\cache2\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["firefox.exe"]
+
+[[rule]]
+id = "browser-cache-brave"
+category = "browser-caches"
+title = "Brave Browser cache"
+description = "Saved web content and compiled scripts."
+risk = "safe"
+action = "delete"
+paths = [
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Cache\\*",
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Code Cache\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["brave.exe"]

@@ -1069,6 +1069,155 @@ textarea {
   background: rgba(16, 185, 129, 0.1);
 }
 
+/* Multi-Platform Download Buttons (Windows, macOS, Linux) */
+.platform-dl-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+}
+
+.btn-platform-dl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  color: var(--color-on-surface);
+  text-decoration: none;
+  transition: all 0.18s ease;
+  cursor: pointer;
+}
+
+.btn-platform-dl:hover {
+  background: var(--color-surface-container-high);
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.btn-platform-dl.is-detected {
+  border-color: rgba(37, 99, 235, 0.6);
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.12) 0%, var(--color-surface-container) 100%);
+}
+
+.btn-platform-dl.is-detected:hover {
+  border-color: var(--color-primary);
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.2) 0%, var(--color-surface-container-high) 100%);
+}
+
+.pdl-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.pdl-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+  text-align: left;
+}
+
+.pdl-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color-on-surface);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pdl-detected-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-xs);
+  background: rgba(37, 99, 235, 0.25);
+  color: #93c5fd;
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  letter-spacing: 0.03em;
+}
+
+.pdl-sub {
+  font-size: 0.72rem;
+  color: var(--color-on-surface-muted);
+  font-family: var(--font-mono);
+}
+
+.pdl-arrow {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-xs);
+  background: rgba(37, 99, 235, 0.12);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-platform-dl:hover .pdl-arrow {
+  background: var(--color-primary);
+  color: #ffffff;
+  transform: translateY(1px);
+}
+
+.app-actions-secondary {
+  margin-top: 0.1rem;
+}
+
+/* Multi-Platform SHA-256 Tabbed Box */
+.sha-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sha-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--color-on-surface-muted);
+}
+
+.sha-tabs {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.sha-tab {
+  background: transparent;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-xs);
+  color: var(--color-on-surface-muted);
+  padding: 0.15rem 0.45rem;
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sha-tab:hover {
+  background: var(--color-surface-container);
+  color: var(--color-on-surface);
+  border-color: var(--color-outline);
+}
+
+.sha-tab.active {
+  background: rgba(37, 99, 235, 0.2);
+  border-color: var(--color-primary);
+  color: #93c5fd;
+  font-weight: 600;
+}
+
 /* --------------------------------------------------------------------------
    4. Why Open Source Hub (3 Feature Cards)
    -------------------------------------------------------------------------- */

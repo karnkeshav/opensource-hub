@@ -1,0 +1,17 @@
+[[rule]]
+id = "macos-downloads-old-installers"
+category = "user-downloads"
+title = "Old Downloaded Installers (90+ days old)"
+description = "Disk images (.dmg), package installers (.pkg), and archives in ~/Downloads."
+risk = "user-data"
+action = "recycle"
+paths = [
+    "~/Downloads/*.dmg",
+    "~/Downloads/*.pkg",
+    "~/Downloads/*.iso",
+    "~/Downloads/*.zip"
+]
+exclude = []
+min_age_days = 90
+requires_admin = false
+requires_closed = []

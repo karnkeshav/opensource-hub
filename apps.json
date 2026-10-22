@@ -27,5 +27,66 @@
     "released": true,
     "runOnline": "",
     "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/sheetstudio-excel-pro"
+  },
+  {
+    "id": "diskstudio-cleaner",
+    "name": "DiskStudio Cleaner",
+    "icon": "🧹",
+    "tagline": "Safe, transparent disk cleaner and space manager. Zero telemetry, no background services, never touches user files.",
+    "tags": ["Disk cleaner", "Privacy", "Offline", "Windows", "macOS", "Linux"],
+    "size": "2.2 MB – 3.1 MB",
+    "platform": "Windows, macOS & Linux",
+    "asset": "DiskStudio-Cleaner-Windows-x64.exe",
+    "sha256": "50e0e0742f00c169e24092127504c371c41aa0147b2a4aa95e6be09ad3f68ccb",
+    "tag": "diskstudio-cleaner-v1.0.0",
+    "released": true,
+    "runOnline": "",
+    "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/diskstudio-cleaner",
+    "downloads": [
+      {
+        "os": "Windows",
+        "icon": "🪟",
+        "name": "Windows",
+        "badge": "Win 10/11 x64",
+        "file": ".exe",
+        "size": "3.1 MB",
+        "asset": "DiskStudio-Cleaner-Windows-x64.exe",
+        "sha256": "50e0e0742f00c169e24092127504c371c41aa0147b2a4aa95e6be09ad3f68ccb"
+      },
+      {
+        "os": "macOS",
+        "icon": "🍎",
+        "name": "macOS",
+        "badge": "Apple Silicon & Intel",
+        "file": ".zip (.app)",
+        "size": "8 KB",
+        "asset": "DiskStudio-Cleaner-macOS.zip",
+        "sha256": "717f977a9863dac0af86318b8e11a92cd95e143308ed2293ff263c64e5b799fe"
+      },
+      {
+        "os": "Linux",
+        "icon": "🐧",
+        "name": "Linux",
+        "badge": "x86_64 tarball",
+        "file": ".tar.gz",
+        "size": "2.2 MB",
+        "asset": "DiskStudio-Cleaner-Linux-x64.tar.gz",
+        "sha256": "2529492feb5c15120c448939a88096f9ab04805ef927a8f5831deee19a81641f"
+      }
+    ]
+  },
+  {
+    "id": "slidestudio-powerpoint-pro",
+    "name": "SlideStudio PowerPoint Pro",
+    "icon": "🎞️",
+    "tagline": "An offline, outline-first presentation app: type an outline, get auto-laid-out, accessible slides. Reads and writes .pptx.",
+    "tags": ["Presentations", "PPTX", "Outline", "Offline"],
+    "size": "147 KB",
+    "platform": "Any modern browser (Chrome / Edge recommended)",
+    "asset": "SlideStudio-PowerPoint-Pro.html",
+    "sha256": "",
+    "released": false,
+    "runOnline": "",
+    "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/slidestudio-powerpoint-pro"
   }
 ]

@@ -1,0 +1,106 @@
+[[rule]]
+id = "macos-dev-xcode-deriveddata"
+category = "developer-caches"
+title = "Xcode DerivedData Build Cache"
+description = "Intermediate build artifacts, module indexes and logs created by Xcode."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Developer/Xcode/DerivedData/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["Xcode"]
+
+[[rule]]
+id = "macos-dev-xcode-devicesupport"
+category = "developer-caches"
+title = "Xcode iOS & watchOS Device Support Symbols"
+description = "Cached debug symbols from connected iOS and watchOS devices."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Developer/Xcode/iOS DeviceSupport/*",
+    "~/Library/Developer/Xcode/watchOS DeviceSupport/*"
+]
+exclude = []
+min_age_days = 30
+requires_admin = false
+requires_closed = ["Xcode"]
+
+[[rule]]
+id = "macos-dev-homebrew"
+category = "developer-caches"
+title = "Homebrew Download Cache"
+description = "Cached bottle tarballs and git clones downloaded by brew."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/Homebrew/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "macos-dev-cocoapods"
+category = "developer-caches"
+title = "CocoaPods Cache"
+description = "Cached podspec repositories and downloaded source tarballs."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/CocoaPods/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "macos-dev-npm"
+category = "developer-caches"
+title = "npm Package Cache"
+description = "Cached tarballs of downloaded Node modules."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/.npm/_cacache/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "macos-dev-pip"
+category = "developer-caches"
+title = "Python pip Wheel Cache"
+description = "Cached Python wheels and source packages."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/pip/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "macos-dev-cargo"
+category = "developer-caches"
+title = "Cargo Registry & Git Cache"
+description = "Cached Rust crate downloads and git repositories."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/.cargo/registry/cache/*",
+    "~/.cargo/git/checkouts/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []

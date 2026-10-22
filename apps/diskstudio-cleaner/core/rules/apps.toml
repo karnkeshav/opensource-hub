@@ -1,0 +1,99 @@
+[[rule]]
+id = "app-cache-teams"
+category = "app-caches"
+title = "Microsoft Teams cache"
+description = "Cached profile pictures, icons and media previews."
+risk = "safe"
+action = "delete"
+paths = [
+    "%APPDATA%\\Microsoft\\Teams\\Cache\\*",
+    "%APPDATA%\\Microsoft\\Teams\\blob_storage\\*",
+    "%APPDATA%\\Microsoft\\Teams\\databases\\*",
+    "%APPDATA%\\Microsoft\\Teams\\GPUCache\\*",
+    "%APPDATA%\\Microsoft\\Teams\\IndexedDB\\*",
+    "%APPDATA%\\Microsoft\\Teams\\Local Storage\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["teams.exe", "ms-teams.exe"]
+
+[[rule]]
+id = "app-cache-slack"
+category = "app-caches"
+title = "Slack cache"
+description = "Cached images and conversation assets."
+risk = "safe"
+action = "delete"
+paths = [
+    "%APPDATA%\\Slack\\Cache\\*",
+    "%APPDATA%\\Slack\\Code Cache\\*",
+    "%APPDATA%\\Slack\\Service Worker\\CacheStorage\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["slack.exe"]
+
+[[rule]]
+id = "app-cache-discord"
+category = "app-caches"
+title = "Discord cache"
+description = "Cached media and channel previews."
+risk = "safe"
+action = "delete"
+paths = [
+    "%APPDATA%\\discord\\Cache\\*",
+    "%APPDATA%\\discord\\Code Cache\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["discord.exe"]
+
+[[rule]]
+id = "app-cache-spotify"
+category = "app-caches"
+title = "Spotify cached songs & artwork"
+description = "Temporary audio streams and album art."
+risk = "safe"
+action = "delete"
+paths = [
+    "%LOCALAPPDATA%\\Spotify\\Data\\*",
+    "%LOCALAPPDATA%\\Spotify\\Storage\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["spotify.exe"]
+
+[[rule]]
+id = "app-cache-zoom"
+category = "app-caches"
+title = "Zoom cache and logs"
+description = "Temporary meeting files and diagnostic data."
+risk = "safe"
+action = "delete"
+paths = [
+    "%APPDATA%\\Zoom\\data\\*",
+    "%APPDATA%\\Zoom\\logs\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["zoom.exe"]
+
+[[rule]]
+id = "app-cache-office"
+category = "app-caches"
+title = "Microsoft Office document cache"
+description = "Local copies of synced office documents."
+risk = "safe"
+action = "delete"
+paths = [
+    "%LOCALAPPDATA%\\Microsoft\\Office\\16.0\\OfficeFileCache\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["winword.exe", "excel.exe", "powerpnt.exe"]

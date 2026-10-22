@@ -1,0 +1,17 @@
+[[rule]]
+id = "downloads-old-installers"
+category = "user-downloads"
+title = "Old downloaded installers (90+ days old)"
+description = "Setup files (.exe, .msi, .iso, .zip) downloaded long ago that are rarely needed again."
+risk = "user-data"
+action = "recycle"
+paths = [
+    "%USERPROFILE%\\Downloads\\*.exe",
+    "%USERPROFILE%\\Downloads\\*.msi",
+    "%USERPROFILE%\\Downloads\\*.iso",
+    "%USERPROFILE%\\Downloads\\*.zip"
+]
+exclude = []
+min_age_days = 90
+requires_admin = false
+requires_closed = []

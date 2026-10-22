@@ -1,0 +1,30 @@
+[[rule]]
+id = "macos-temp"
+category = "temp-files"
+title = "macOS Temporary Files"
+description = "Temporary files created by system daemons and apps in $TMPDIR and /tmp."
+risk = "safe"
+action = "delete"
+paths = [
+    "/tmp/*",
+    "/private/tmp/*"
+]
+exclude = []
+min_age_days = 1
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "macos-trash"
+category = "macos-trash"
+title = "macOS Trash"
+description = "Deleted files waiting in your user Trash folder (~/.Trash)."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/.Trash/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []

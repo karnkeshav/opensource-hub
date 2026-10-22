@@ -1,0 +1,48 @@
+[[rule]]
+id = "sys-windows-update"
+category = "system-caches"
+title = "Windows Update download cache"
+description = "Cached installer files for already-downloaded updates in SoftwareDistribution\\Download."
+risk = "safe"
+action = "delete"
+paths = [
+    "%WINDIR%\\SoftwareDistribution\\Download\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = true
+requires_closed = []
+
+[[rule]]
+id = "sys-crash-dumps"
+category = "system-caches"
+title = "Crash dumps and error reports"
+description = "Memory minidumps and crash logs generated when programs crash."
+risk = "safe"
+action = "delete"
+paths = [
+    "%LOCALAPPDATA%\\CrashDumps\\*",
+    "%WINDIR%\\Minidump\\*",
+    "%LOCALAPPDATA%\\Microsoft\\Windows\\WER\\ReportArchive\\*",
+    "%LOCALAPPDATA%\\Microsoft\\Windows\\WER\\ReportQueue\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "sys-logs"
+category = "system-caches"
+title = "Windows and setup log files"
+description = "Historical installation and service log files."
+risk = "safe"
+action = "delete"
+paths = [
+    "%WINDIR%\\Logs\\*",
+    "%LOCALAPPDATA%\\Microsoft\\Windows\\Explorer\\thumbcache_*.db"
+]
+exclude = []
+min_age_days = 7
+requires_admin = false
+requires_closed = []

@@ -1,0 +1,125 @@
+[[rule]]
+id = "dev-cache-npm"
+category = "developer-caches"
+title = "npm package cache"
+description = "Cached tarballs of downloaded node packages."
+risk = "safe"
+action = "delete"
+paths = [
+    "%LOCALAPPDATA%\\npm-cache\\*",
+    "%APPDATA%\\npm-cache\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "dev-cache-pip"
+category = "developer-caches"
+title = "Python pip cache"
+description = "Cached Python wheels and source distributions."
+risk = "safe"
+action = "delete"
+paths = [
+    "%LOCALAPPDATA%\\pip\\cache\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "dev-cache-cargo"
+category = "developer-caches"
+title = "Rust Cargo registry and git cache"
+description = "Cached crate tarballs and checkout clones in .cargo."
+risk = "safe"
+action = "delete"
+paths = [
+    "%USERPROFILE%\\.cargo\\registry\\cache\\*",
+    "%USERPROFILE%\\.cargo\\git\\checkouts\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "dev-cache-gradle"
+category = "developer-caches"
+title = "Gradle cache"
+description = "Downloaded jar files and build artifacts."
+risk = "safe"
+action = "delete"
+paths = [
+    "%USERPROFILE%\\.gradle\\caches\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "dev-cache-nuget"
+category = "developer-caches"
+title = "NuGet package cache"
+description = "Cached .NET packages in local folders."
+risk = "safe"
+action = "delete"
+paths = [
+    "%LOCALAPPDATA%\\NuGet\\v3-cache\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "dev-cache-vscode"
+category = "developer-caches"
+title = "Visual Studio Code cache"
+description = "Cached extensions, language server indexes and GPU cache."
+risk = "safe"
+action = "delete"
+paths = [
+    "%APPDATA%\\Code\\Cache\\*",
+    "%APPDATA%\\Code\\CachedData\\*",
+    "%APPDATA%\\Code\\CachedExtensionVSIXs\\*",
+    "%APPDATA%\\Code\\GPUCache\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["code.exe"]
+
+[[rule]]
+id = "dev-cache-yarn-pnpm"
+category = "developer-caches"
+title = "Yarn & pnpm package stores"
+description = "Global cache of downloaded JavaScript packages."
+risk = "safe"
+action = "delete"
+paths = [
+    "%LOCALAPPDATA%\\Yarn\\Cache\\*",
+    "%LOCALAPPDATA%\\pnpm\\store\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "dev-cache-android"
+category = "developer-caches"
+title = "Android SDK & Gradle cache"
+description = "Temporary emulator caches and build outputs."
+risk = "safe"
+action = "delete"
+paths = [
+    "%USERPROFILE%\\.android\\cache\\*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []

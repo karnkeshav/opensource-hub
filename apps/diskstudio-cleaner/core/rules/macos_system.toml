@@ -1,0 +1,45 @@
+[[rule]]
+id = "macos-sys-diagnostics"
+category = "system-caches"
+title = "Crash Reports & Diagnostic Logs"
+description = "System crash logs and diagnostic reports in ~/Library/Logs/DiagnosticReports."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Logs/DiagnosticReports/*",
+    "/Library/Logs/DiagnosticReports/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "macos-sys-quicklook"
+category = "system-caches"
+title = "QuickLook Thumbnail Cache"
+description = "Generated thumbnail previews for Finder and QuickLook."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/com.apple.QuickLook.thumbnailcache/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = []
+
+[[rule]]
+id = "macos-sys-logs"
+category = "system-caches"
+title = "Historical User Logs"
+description = "Application and system log files older than 7 days."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Logs/*"
+]
+exclude = []
+min_age_days = 7
+requires_admin = false
+requires_closed = []

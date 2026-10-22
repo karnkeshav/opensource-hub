@@ -122,48 +122,97 @@
 
       var meta = el("div", "meta");
       meta.appendChild(el("span", "meta-item", a.platform || "–"));
-      var c = counts && typeof counts[a.asset] === "number" ? counts[a.asset] : null;
-      meta.appendChild(el("span", "meta-item", fmt(c) + " downloads"));
+      
+      var totalDownloads = 0;
+      var hasCount = false;
+      if (counts) {
+        if (a.downloads && Array.isArray(a.downloads)) {
+          a.downloads.forEach(function (d) {
+            if (typeof counts[d.asset] === "number") {
+              totalDownloads += counts[d.asset];
+              hasCount = true;
+            }
+          });
+        }
+        if (typeof counts[a.asset] === "number") {
+          totalDownloads += counts[a.asset];
+          hasCount = true;
+        }
+      }
+      meta.appendChild(el("span", "meta-item", (hasCount ? fmt(totalDownloads) : "–") + " downloads"));
       card.appendChild(meta);
 
-      var actions = el("div", "app-actions");
-      var dl;
-      if (repo && a.asset && a.released) {
-        dl = el("a", "btn btn-primary", "Download");
-        // An app may pin its own release tag; otherwise the repo's latest release is used.
-        var rel = /^[\w.-]+$/.test(a.tag || "") ? "download/" + a.tag : "latest/download";
-        dl.href = "https://github.com/" + repo + "/releases/" + rel + "/" + encodeURIComponent(a.asset);
-        dl.rel = "noopener";
-        dl.addEventListener("click", function () { logDownload(a.id || a.name); });
-      } else {
-        dl = el("button", "btn btn-primary", "Coming soon");
-        dl.type = "button"; dl.disabled = true; dl.setAttribute("aria-disabled", "true");
-      }
-      actions.appendChild(dl);
-      if (a.runOnline && /^https:\/\//.test(a.runOnline)) {
-        var run = el("a", "btn btn-ghost", "Run online");
-        run.href = a.runOnline; run.rel = "noopener";
-        actions.appendChild(run);
-      }
-      if (a.source && /^https:\/\/github\.com\//.test(a.source)) {
-        var src = el("a", "btn btn-ghost", "Source");
-        src.href = a.source; src.rel = "noopener"; src.target = "_blank";
-        actions.appendChild(src);
-      }
-      card.appendChild(actions);
+      // System detection for platform recommendation
+      var ua = navigator.userAgent || "";
+      var detectedOS = "Windows";
+      if (/Macintosh|Mac OS X/i.test(ua)) detectedOS = "macOS";
+      else if (/Linux/i.test(ua) && !/Android/i.test(ua)) detectedOS = "Linux";
 
-      if (a.sha256 && /^[a-f0-9]{64}$/i.test(a.sha256)) {
-        var sha = el("div", "sha");
-        var code = el("code", null, "SHA-256: " + a.sha256);
-        code.title = "Click to copy full SHA-256 checksum";
-        sha.appendChild(code);
+      var rel = /^[\w.-]+$/.test(a.tag || "") ? "download/" + a.tag : "latest/download";
+
+      if (a.downloads && Array.isArray(a.downloads) && a.downloads.length) {
+        // Multi-platform download button cluster (Windows, macOS, Linux)
+        var dlGroup = el("div", "platform-dl-group");
+        a.downloads.forEach(function (d) {
+          var btn = el("a", "btn btn-platform-dl" + (d.os === detectedOS ? " is-detected" : ""));
+          btn.href = "https://github.com/" + repo + "/releases/" + rel + "/" + encodeURIComponent(d.asset);
+          btn.rel = "noopener";
+          btn.setAttribute("title", "Download " + a.name + " for " + d.name + " (" + d.size + ")");
+          btn.addEventListener("click", function () { logDownload((a.id || a.name) + "-" + d.os); });
+
+          var iconSpan = el("span", "pdl-icon", d.icon || "💾");
+          var infoSpan = el("span", "pdl-info");
+          var nameSpan = el("span", "pdl-name", d.name);
+          if (d.os === detectedOS) {
+            var recBadge = el("span", "pdl-detected-badge", "Your OS");
+            nameSpan.appendChild(recBadge);
+          }
+          var subSpan = el("span", "pdl-sub", (d.badge || d.file || "") + " • " + d.size);
+          infoSpan.appendChild(nameSpan);
+          infoSpan.appendChild(subSpan);
+
+          var arrowSpan = el("span", "pdl-arrow", "↓");
+
+          btn.appendChild(iconSpan);
+          btn.appendChild(infoSpan);
+          btn.appendChild(arrowSpan);
+          dlGroup.appendChild(btn);
+        });
+        card.appendChild(dlGroup);
+
+        var actions = el("div", "app-actions app-actions-secondary");
+        if (a.runOnline && /^https:\/\//.test(a.runOnline)) {
+          var run = el("a", "btn btn-ghost", "Run online");
+          run.href = a.runOnline; run.rel = "noopener";
+          actions.appendChild(run);
+        }
+        if (a.source && /^https:\/\/github\.com\//.test(a.source)) {
+          var src = el("a", "btn btn-ghost", "Source");
+          src.href = a.source; src.rel = "noopener"; src.target = "_blank";
+          actions.appendChild(src);
+        }
+        card.appendChild(actions);
+
+        // Tabbed cryptographic SHA-256 box for multi-platform
+        var shaContainer = el("div", "sha-container");
+        var shaHeader = el("div", "sha-header");
+        shaHeader.appendChild(el("span", "sha-title", "Verified SHA-256 Checksums:"));
+
+        var tabs = el("div", "sha-tabs");
+        var activeDownload = a.downloads.find(function (d) { return d.os === detectedOS; }) || a.downloads[0];
+
+        var shaBox = el("div", "sha");
+        var code = el("code", null, activeDownload.os + ": " + activeDownload.sha256);
+        code.title = "Click to copy " + activeDownload.os + " SHA-256 checksum";
+        shaBox.appendChild(code);
 
         var copyBtn = el("button", "btn-copy-sha", "Copy");
         copyBtn.type = "button";
         copyBtn.setAttribute("aria-label", "Copy SHA-256 checksum");
-        var handleCopy = function () {
+
+        var doCopy = function (hash) {
           if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(a.sha256).then(function () {
+            navigator.clipboard.writeText(hash).then(function () {
               copyBtn.textContent = "Copied ✓";
               copyBtn.className = "btn-copy-sha copied";
               setTimeout(function () {
@@ -173,10 +222,82 @@
             }).catch(function () {});
           }
         };
-        copyBtn.addEventListener("click", handleCopy);
-        code.addEventListener("click", handleCopy);
-        sha.appendChild(copyBtn);
-        card.appendChild(sha);
+
+        var curHash = activeDownload.sha256;
+        copyBtn.addEventListener("click", function () { doCopy(curHash); });
+        code.addEventListener("click", function () { doCopy(curHash); });
+        shaBox.appendChild(copyBtn);
+
+        a.downloads.forEach(function (d) {
+          var tabBtn = el("button", "sha-tab" + (d === activeDownload ? " active" : ""), d.icon + " " + d.os);
+          tabBtn.type = "button";
+          tabBtn.addEventListener("click", function () {
+            tabs.querySelectorAll(".sha-tab").forEach(function (t) { t.classList.remove("active"); });
+            tabBtn.classList.add("active");
+            curHash = d.sha256;
+            code.textContent = d.os + ": " + d.sha256;
+            code.title = "Click to copy " + d.os + " SHA-256 checksum";
+          });
+          tabs.appendChild(tabBtn);
+        });
+
+        shaHeader.appendChild(tabs);
+        shaContainer.appendChild(shaHeader);
+        shaContainer.appendChild(shaBox);
+        card.appendChild(shaContainer);
+
+      } else {
+        // Standard single-asset download action
+        var actions = el("div", "app-actions");
+        var dl;
+        if (repo && a.asset && a.released) {
+          dl = el("a", "btn btn-primary", "Download");
+          dl.href = "https://github.com/" + repo + "/releases/" + rel + "/" + encodeURIComponent(a.asset);
+          dl.rel = "noopener";
+          dl.addEventListener("click", function () { logDownload(a.id || a.name); });
+        } else {
+          dl = el("button", "btn btn-primary", "Coming soon");
+          dl.type = "button"; dl.disabled = true; dl.setAttribute("aria-disabled", "true");
+        }
+        actions.appendChild(dl);
+        if (a.runOnline && /^https:\/\//.test(a.runOnline)) {
+          var run = el("a", "btn btn-ghost", "Run online");
+          run.href = a.runOnline; run.rel = "noopener";
+          actions.appendChild(run);
+        }
+        if (a.source && /^https:\/\/github\.com\//.test(a.source)) {
+          var src = el("a", "btn btn-ghost", "Source");
+          src.href = a.source; src.rel = "noopener"; src.target = "_blank";
+          actions.appendChild(src);
+        }
+        card.appendChild(actions);
+
+        if (a.sha256 && /^[a-f0-9]{64}$/i.test(a.sha256)) {
+          var sha = el("div", "sha");
+          var code = el("code", null, "SHA-256: " + a.sha256);
+          code.title = "Click to copy full SHA-256 checksum";
+          sha.appendChild(code);
+
+          var copyBtn = el("button", "btn-copy-sha", "Copy");
+          copyBtn.type = "button";
+          copyBtn.setAttribute("aria-label", "Copy SHA-256 checksum");
+          var handleCopy = function () {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(a.sha256).then(function () {
+                copyBtn.textContent = "Copied ✓";
+                copyBtn.className = "btn-copy-sha copied";
+                setTimeout(function () {
+                  copyBtn.textContent = "Copy";
+                  copyBtn.className = "btn-copy-sha";
+                }, 2000);
+              }).catch(function () {});
+            }
+          };
+          copyBtn.addEventListener("click", handleCopy);
+          code.addEventListener("click", handleCopy);
+          sha.appendChild(copyBtn);
+          card.appendChild(sha);
+        }
       }
       grid.appendChild(card);
     });
@@ -188,13 +309,20 @@
       var matchesFilter = true;
       if (activeFilter !== "all") {
         var filterStr = activeFilter.toLowerCase();
-        var allText = ((a.platform || "") + " " + (a.tags || []).join(" ")).toLowerCase();
+        var platformText = (a.platform || "");
+        if (a.downloads && Array.isArray(a.downloads)) {
+          platformText += " " + a.downloads.map(function (d) { return d.os + " " + (d.name || "") + " " + (d.badge || ""); }).join(" ");
+        }
+        var allText = (platformText + " " + (a.tags || []).join(" ")).toLowerCase();
         matchesFilter = allText.indexOf(filterStr) !== -1;
       }
       var matchesQuery = true;
       if (q) {
-        var searchable = ((a.name || "") + " " + (a.tagline || "") + " " + (a.platform || "") + " " + (a.tags || []).join(" ")).toLowerCase();
-        matchesQuery = searchable.indexOf(q) !== -1;
+        var searchable = ((a.name || "") + " " + (a.tagline || "") + " " + (a.platform || "") + " " + (a.tags || []).join(" "));
+        if (a.downloads && Array.isArray(a.downloads)) {
+          searchable += " " + a.downloads.map(function (d) { return d.os + " " + (d.name || "") + " " + (d.badge || "") + " " + (d.file || ""); }).join(" ");
+        }
+        matchesQuery = searchable.toLowerCase().indexOf(q) !== -1;
       }
       return matchesFilter && matchesQuery;
     });
@@ -204,8 +332,20 @@
   function updateGlobalStats(apps, counts) {
     var total = 0, any = false;
     apps.forEach(function (a) {
-      var c = counts && typeof counts[a.asset] === "number" ? counts[a.asset] : null;
-      if (c != null) { total += c; any = true; }
+      if (counts) {
+        if (a.downloads && Array.isArray(a.downloads)) {
+          a.downloads.forEach(function (d) {
+            if (typeof counts[d.asset] === "number") {
+              total += counts[d.asset];
+              any = true;
+            }
+          });
+        }
+        if (typeof counts[a.asset] === "number") {
+          total += counts[a.asset];
+          any = true;
+        }
+      }
     });
     var statApps = document.getElementById("stat-apps");
     var statDownloads = document.getElementById("stat-downloads");

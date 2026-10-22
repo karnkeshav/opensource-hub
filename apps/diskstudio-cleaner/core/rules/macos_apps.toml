@@ -1,0 +1,80 @@
+[[rule]]
+id = "macos-app-slack"
+category = "app-caches"
+title = "Slack Cache"
+description = "Cached workspace messages and profile images."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/com.tinyspeck.slackmacgap/*",
+    "~/Library/Application Support/Slack/Cache/*",
+    "~/Library/Application Support/Slack/Code Cache/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["Slack"]
+
+[[rule]]
+id = "macos-app-teams"
+category = "app-caches"
+title = "Microsoft Teams Cache"
+description = "Cached media previews and diagnostic logs."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/com.microsoft.teams2/*",
+    "~/Library/Group Containers/UBF8T346G9.com.microsoft.teams/Library/Caches/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["Microsoft Teams"]
+
+[[rule]]
+id = "macos-app-discord"
+category = "app-caches"
+title = "Discord Cache"
+description = "Cached channel images, avatars and voice assets."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/com.hnc.Discord/*",
+    "~/Library/Application Support/discord/Cache/*",
+    "~/Library/Application Support/discord/Code Cache/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["Discord"]
+
+[[rule]]
+id = "macos-app-spotify"
+category = "app-caches"
+title = "Spotify Streaming Cache"
+description = "Temporary audio stream segments and album art."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/com.spotify.client/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["Spotify"]
+
+[[rule]]
+id = "macos-app-zoom"
+category = "app-caches"
+title = "Zoom Meeting Cache & Logs"
+description = "Temporary meeting files and crash reports."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/us.zoom.xos/*",
+    "~/Library/Logs/zoom.us/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["zoom.us"]

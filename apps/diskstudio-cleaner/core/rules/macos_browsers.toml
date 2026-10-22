@@ -1,0 +1,75 @@
+[[rule]]
+id = "macos-browser-safari"
+category = "browser-caches"
+title = "Safari WebKit Cache"
+description = "Cached website images and scripts. Never touches passwords, history, or bookmarks."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/com.apple.Safari/*",
+    "~/Library/Containers/com.apple.Safari/Data/Library/Caches/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["Safari"]
+
+[[rule]]
+id = "macos-browser-chrome"
+category = "browser-caches"
+title = "Google Chrome Cache"
+description = "Cached web pages and compiled code cache."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/Google/Chrome/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["Google Chrome"]
+
+[[rule]]
+id = "macos-browser-firefox"
+category = "browser-caches"
+title = "Mozilla Firefox Cache"
+description = "Cached web assets in Firefox profiles."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/Firefox/Profiles/*/cache2/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["firefox"]
+
+[[rule]]
+id = "macos-browser-edge"
+category = "browser-caches"
+title = "Microsoft Edge Cache"
+description = "Cached pages and scripts from Microsoft Edge."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/Microsoft Edge/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["Microsoft Edge"]
+
+[[rule]]
+id = "macos-browser-brave"
+category = "browser-caches"
+title = "Brave Browser Cache"
+description = "Cached website data from Brave Browser."
+risk = "safe"
+action = "delete"
+paths = [
+    "~/Library/Caches/BraveSoftware/Brave-Browser/*"
+]
+exclude = []
+min_age_days = 0
+requires_admin = false
+requires_closed = ["Brave Browser"]

@@ -130,7 +130,9 @@
       var dl;
       if (repo && a.asset && a.released) {
         dl = el("a", "btn btn-primary", "Download");
-        dl.href = "https://github.com/" + repo + "/releases/latest/download/" + encodeURIComponent(a.asset);
+        // An app may pin its own release tag; otherwise the repo's latest release is used.
+        var rel = /^[\w.-]+$/.test(a.tag || "") ? "download/" + a.tag : "latest/download";
+        dl.href = "https://github.com/" + repo + "/releases/" + rel + "/" + encodeURIComponent(a.asset);
         dl.rel = "noopener";
         dl.addEventListener("click", function () { logDownload(a.id || a.name); });
       } else {

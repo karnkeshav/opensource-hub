@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SheetStudio Excel Pro</title>
+<meta name="description" content="A free, offline spreadsheet in one small HTML file. Reads and writes .xlsx.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; font-src 'none'; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<style>/*CSS*/</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand"><span class="logo">&#9638;</span> SheetStudio <b>Excel Pro</b></div>
+    <input id="title" class="title" value="Untitled workbook" aria-label="Workbook name" spellcheck="false">
+    <span id="saved" class="muted" aria-live="polite"></span>
+    <div class="grow"></div>
+    <button id="btn-theme" class="rb" type="button" title="Switch light / dark theme">Theme</button>
+  </header>
+  <div id="tabs" role="tablist" aria-label="Ribbon"></div>
+  <div id="ribbon" role="toolbar" aria-label="Commands"></div>
+  <div class="fbar">
+    <input id="namebox" aria-label="Name box" spellcheck="false" autocomplete="off">
+    <button id="fx" type="button" title="Insert function" aria-label="Insert function">fx</button>
+    <textarea id="fin" rows="1" aria-label="Formula bar" spellcheck="false"></textarea>
+  </div>
+  <div id="gridwrap">
+    <canvas></canvas>
+    <div class="scroller" tabindex="-1"><div class="spacer"></div></div>
+    <div id="objs"></div>
+    <textarea id="editor" spellcheck="false" aria-label="Cell editor"></textarea>
+    <div id="ac" role="listbox"></div>
+  </div>
+  <footer>
+    <div id="sheets" role="tablist" aria-label="Sheets"></div>
+    <div id="stats" aria-live="polite"></div>
+    <div id="zoomw"><span id="zv">100%</span><input id="zoom" type="range" min="50" max="200" step="10" value="100" aria-label="Zoom"></div>
+  </footer>
+</div>
+<textarea id="sink" aria-label="Spreadsheet keyboard input" tabindex="0"></textarea>
+<div id="live" class="sr" aria-live="polite"></div>
+<input id="filein" type="file" hidden accept=".xlsx,.xlsm,.csv,.tsv,.txt,.json,.sheetstudio">
+<script>/*JS*/</script>
+</body>
+</html>

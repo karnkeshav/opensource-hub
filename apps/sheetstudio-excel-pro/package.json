@@ -1,0 +1,15 @@
+{
+  "name": "sheetstudio-excel-pro",
+  "version": "1.0.0",
+  "description": "SheetStudio Excel Pro - an offline spreadsheet in one small HTML file",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

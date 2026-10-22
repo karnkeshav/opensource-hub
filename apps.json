@@ -12,5 +12,20 @@
     "released": true,
     "runOnline": "",
     "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/docstudio-word-pro"
+  },
+  {
+    "id": "sheetstudio-excel-pro",
+    "name": "SheetStudio Excel Pro",
+    "icon": "📊",
+    "tagline": "An offline spreadsheet with tables, live pivots, charts and queries that reads and writes .xlsx.",
+    "tags": ["Spreadsheet", "XLSX", "Charts", "Offline"],
+    "size": "276 KB",
+    "platform": "Any modern browser (Chrome / Edge recommended)",
+    "asset": "SheetStudio-Excel-Pro.html",
+    "sha256": "7f54e02c9b28018c6f4ae99d6063134535fe5bd67b64095c6d23e928485d8594",
+    "tag": "sheetstudio-excel-pro-v1.0.0",
+    "released": true,
+    "runOnline": "",
+    "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/sheetstudio-excel-pro"
   }
 ]

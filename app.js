@@ -123,23 +123,6 @@
       var meta = el("div", "meta");
       meta.appendChild(el("span", "meta-item", a.platform || "–"));
       
-      var totalDownloads = 0;
-      var hasCount = false;
-      if (counts) {
-        if (a.downloads && Array.isArray(a.downloads)) {
-          a.downloads.forEach(function (d) {
-            if (typeof counts[d.asset] === "number") {
-              totalDownloads += counts[d.asset];
-              hasCount = true;
-            }
-          });
-        }
-        if (typeof counts[a.asset] === "number") {
-          totalDownloads += counts[a.asset];
-          hasCount = true;
-        }
-      }
-      meta.appendChild(el("span", "meta-item", (hasCount ? fmt(totalDownloads) : "–") + " downloads"));
       card.appendChild(meta);
 
       // System detection for platform recommendation

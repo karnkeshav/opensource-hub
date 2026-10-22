@@ -10,6 +10,7 @@
     "asset": "DocStudio-Word-Pro-UltraLight.zip",
     "sha256": "baf4a66f7b3997d8442ad882bd23b1fa83e0497a4a29b1cf6730d3cd81613a3e",
     "released": true,
-    "runOnline": ""
+    "runOnline": "",
+    "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/docstudio-word-pro"
   }
 ]

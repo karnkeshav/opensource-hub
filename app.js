@@ -133,6 +133,11 @@
         run.href = a.runOnline; run.rel = "noopener";
         actions.appendChild(run);
       }
+      if (a.source && /^https:\/\/github\.com\//.test(a.source)) {
+        var src = el("a", "btn btn-ghost", "Source");
+        src.href = a.source; src.rel = "noopener"; src.target = "_blank";
+        actions.appendChild(src);
+      }
       card.appendChild(actions);
       if (a.sha256 && /^[a-f0-9]{64}$/i.test(a.sha256)) {
         var sha = el("div", "sha");

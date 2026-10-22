@@ -1,0 +1,51 @@
+{
+  "name": "docstudio-word-office",
+  "version": "1.0.0",
+  "description": "DocStudio Word Pro - Standalone Office Suite",
+  "main": "electron-main.js",
+  "author": "DocStudio",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "/mnt/c/Users/keysh/github/.venv/bin/python3 converter_server.py",
+    "dist:win": "vite build && electron-builder --win portable --x64"
+  },
+  "build": {
+    "appId": "com.docstudio.wordpro",
+    "productName": "DocStudio-Word-Pro",
+    "directories": {
+      "output": "dist_electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron-main.js",
+      "preload.js"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.1.2",
+    "autoprefixer": "^10.6.1",
+    "docx": "^9.12.0",
+    "electron": "^44.9.0",
+    "electron-builder": "^26.15.3",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
+    "lucide-react": "^1.59.0",
+    "mammoth": "^1.13.0",
+    "pdfjs-dist": "^6.4.299",
+    "postcss": "^8.5.30",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.3.4",
+    "vite-plugin-singlefile": "^2.3.3"
+  }
+}

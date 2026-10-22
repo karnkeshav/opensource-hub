@@ -1,0 +1,15 @@
+{
+  "name": "pdfstudio-acrobat-pro",
+  "version": "1.0.0",
+  "description": "PDFStudio Acrobat Pro - an offline PDF viewer and editor in one small HTML file",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PDFStudio Acrobat Pro</title>
+<meta name="description" content="A free, offline PDF viewer and editor in one small HTML file.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data: blob:; worker-src blob:; connect-src blob: data:; form-action 'none'; base-uri 'none'">
+<style>/*CSS*/</style>
+</head>
+<body>
+<div id="app" class="empty">
+  <header class="top" role="banner">
+    <button id="b-side" class="ib" type="button" aria-label="Toggle sidebar" title="Sidebar (F4)"></button>
+    <div class="brand"><span class="logo" aria-hidden="true">P</span><span class="bn">PDFStudio</span></div>
+    <span id="fname" class="fname" title=""></span>
+    <span id="dirty" class="dot" aria-live="polite"></span>
+    <nav id="tools" class="tools" role="toolbar" aria-label="Tools"></nav>
+    <div class="grow"></div>
+    <button id="b-find" class="ib" type="button" aria-label="Find" title="Find (Ctrl+F)"></button>
+    <button id="b-org" class="ib" type="button" aria-label="Organize pages" title="Organize pages"></button>
+    <button id="b-cmd" class="cmdk" type="button" aria-label="All commands" title="All commands (Ctrl+K)"><span class="ci"></span><span class="ct">Commands</span><kbd>Ctrl K</kbd></button>
+    <button id="b-save" class="ib pri" type="button" aria-label="Save" title="Save (Ctrl+S)"></button>
+    <button id="b-theme" class="ib" type="button" aria-label="Switch theme" title="Light / dark"></button>
+  </header>
+  <div id="ctx" class="ctx" role="toolbar" aria-label="Options"></div>
+  <div id="findbar" class="findbar" hidden>
+    <input id="q" type="search" placeholder="Find in document" aria-label="Find in document" autocomplete="off" spellcheck="false">
+    <span id="qn" class="muted" aria-live="polite"></span>
+    <button id="q-prev" class="ib" type="button" aria-label="Previous match"></button>
+    <button id="q-next" class="ib" type="button" aria-label="Next match"></button>
+    <label class="chk"><input id="q-case" type="checkbox"> Match case</label>
+    <label class="chk"><input id="q-word" type="checkbox"> Whole words</label>
+    <button id="q-close" class="ib" type="button" aria-label="Close find"></button>
+  </div>
+  <main class="main">
+    <aside id="side" class="side" aria-label="Sidebar">
+      <div class="stabs" role="tablist">
+        <button role="tab" data-p="thumbs" aria-selected="true">Pages</button>
+        <button role="tab" data-p="outline">Bookmarks</button>
+        <button role="tab" data-p="comments">Comments</button>
+        <button role="tab" data-p="fields">Fields</button>
+      </div>
+      <div id="spanel" class="spanel" role="tabpanel"></div>
+    </aside>
+    <section id="view" class="view" tabindex="0" aria-label="Document">
+      <div id="pages" class="pages"></div>
+      <div id="org" class="org" hidden></div>
+      <div id="drop" class="drop">
+        <div class="hero">
+          <div class="big" aria-hidden="true">P</div>
+          <h1>Open a PDF</h1>
+          <p>Drop a file here, or choose one. Everything stays on this device.</p>
+          <div class="row"><button id="b-open" class="btn primary" type="button">Open PDF</button><button id="b-new" class="btn" type="button">Blank PDF</button><button id="b-imgs" class="btn" type="button">Images to PDF</button></div>
+          <p class="muted small">Tip: press <kbd>Ctrl</kbd> <kbd>K</kbd> any time to reach every feature.</p>
+          <div id="recover"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="status">
+    <div class="pnav"><button id="p-prev" class="ib" type="button" aria-label="Previous page"></button><input id="pnum" aria-label="Page number" value="1" inputmode="numeric"><span id="pcount" class="muted">/ 0</span><button id="p-next" class="ib" type="button" aria-label="Next page"></button></div>
+    <span id="msg" class="muted msg" aria-live="polite"></span>
+    <div class="grow"></div>
+    <div class="zoomw"><button id="z-out" class="ib" type="button" aria-label="Zoom out"></button><button id="zv" class="zv" type="button" aria-label="Zoom options">100%</button><button id="z-in" class="ib" type="button" aria-label="Zoom in"></button></div>
+  </footer>
+</div>
+<div id="live" class="sr" aria-live="polite"></div>
+<input id="filein" type="file" hidden accept=".pdf,application/pdf">
+<input id="anyin" type="file" hidden>
+<div id="printarea"></div>
+<script>/*JS*/</script>
+</body>
+</html>

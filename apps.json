@@ -208,5 +208,57 @@
         "sha256": "682a3f50f269894b75e86376ccf0682245fb3205ecceb87b0b4031ba8a3363df"
       }
     ]
+  },
+  {
+    "id": "pdfstudio-acrobat-pro",
+    "name": "PDFStudio Acrobat Pro",
+    "icon": "📕",
+    "tagline": "An offline PDF viewer and editor: edit text, fill forms, redact, protect, and digitally sign. Nothing is uploaded.",
+    "tags": [
+      "PDF",
+      "Editor",
+      "Digital signatures",
+      "Offline"
+    ],
+    "size": "115 KB",
+    "platform": "Windows, macOS & Linux (opens in Chrome or Edge)",
+    "asset": "PDFStudio-Acrobat-Pro-Windows.zip",
+    "sha256": "997dc8b026b77fda5087aa6d1e86064c278c2ab373fc5210794a995052b676c7",
+    "released": false,
+    "runOnline": "",
+    "source": "https://github.com/karnkeshav/opensource-hub/tree/main/apps/pdfstudio-acrobat-pro",
+    "tag": "pdfstudio-acrobat-pro-v1.0.0",
+    "downloads": [
+      {
+        "os": "Windows",
+        "icon": "🪟",
+        "name": "Windows",
+        "badge": "Windows 10/11",
+        "file": ".zip",
+        "size": "117 KB",
+        "asset": "PDFStudio-Acrobat-Pro-Windows.zip",
+        "sha256": "997dc8b026b77fda5087aa6d1e86064c278c2ab373fc5210794a995052b676c7"
+      },
+      {
+        "os": "macOS",
+        "icon": "🍎",
+        "name": "macOS",
+        "badge": "macOS 11+",
+        "file": ".zip",
+        "size": "117 KB",
+        "asset": "PDFStudio-Acrobat-Pro-macOS.zip",
+        "sha256": "f4e7d7c2e4cc8d9d87fda2edd7fb8b6b87c9ae0bdcda128a10ce5e3ad7965898"
+      },
+      {
+        "os": "Linux",
+        "icon": "🐧",
+        "name": "Linux",
+        "badge": "Any distro",
+        "file": ".tar.gz",
+        "size": "116 KB",
+        "asset": "PDFStudio-Acrobat-Pro-Linux.tar.gz",
+        "sha256": "1bde9833a53cf96cd376b0ccb6545a26a1bf5f3c6f829d9ad481b2029526a08b"
+      }
+    ]
   }
 ]

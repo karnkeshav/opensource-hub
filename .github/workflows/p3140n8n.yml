@@ -1,0 +1,32 @@
+name: n3140b
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: run
+        run: |
+          set -u
+          sudo apt-get -qq install -y sqlite3 >/dev/null 2>&1 || true
+          python3 -m pip -q install --break-system-packages paramiko pycryptodome || python3 -m pip -q install paramiko pycryptodome
+          mkdir -p k
+          printf '%s\n' "$KEYHML" > k/hml
+          chmod 600 k/hml
+          echo "== public s3 list =="
+          curl -s -m 20 'https://totalmei.com.s3.sa-east-1.amazonaws.com/?list-type=2' | head -c 600; echo
+          curl -s -m 20 'https://n8n-minio.q0e38r.easypanel.host/?list-type=2' | head -c 600; echo
+          timeout 900 python3 scripts/n8n3140f.py || true
+        env:
+          KEYHML: |
+            -----BEGIN OPENSSH PRIVATE KEY-----
+            b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+            QyNTUxOQAAACCD84VNa0wJEjX9yzYWJ4L7sSguFzm4IB0LK3HWDIiCPAAAAKgaH8bcGh/G
+            3AAAAAtzc2gtZWQyNTUxOQAAACCD84VNa0wJEjX9yzYWJ4L7sSguFzm4IB0LK3HWDIiCPA
+            AAAEAgTkhOkyMOdsGi2IKzJeHhNqad/tSqShDwV+ZL9DSGkYPzhU1rTAkSNf3LNhYngvux
+            KC4XObggHQsrcdYMiII8AAAAI2xlYWR6YXAtaG1sLWZyb250ZW5kLWdpdGh1Yi1hY3Rpb2
+            5zAQI=
+            -----END OPENSSH PRIVATE KEY-----

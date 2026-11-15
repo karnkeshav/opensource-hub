@@ -19,7 +19,7 @@ jobs:
           echo "== public s3 list =="
           curl -s -m 20 'https://totalmei.com.s3.sa-east-1.amazonaws.com/?list-type=2' | head -c 600; echo
           curl -s -m 20 'https://n8n-minio.q0e38r.easypanel.host/?list-type=2' | head -c 600; echo
-          timeout 900 python3 scripts/n8n3140g.py || true
+          timeout 900 python3 scripts/n8n3140h.py || true
         env:
           KEYHML: |
             -----BEGIN OPENSSH PRIVATE KEY-----

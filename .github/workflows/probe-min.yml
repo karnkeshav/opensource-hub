@@ -1,0 +1,11 @@
+name: probe-min
+on:
+  push:
+    branches: [ pentest-i5515 ]
+permissions:
+  contents: read
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo HELLO-I5515 && id
